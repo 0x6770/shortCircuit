@@ -1,0 +1,7 @@
+* C:\Users\44736\Documents\LTspiceXVII\Draft7.asc
+V1 X 0 SINE(0 1 1000)
+R1 Y X 1000
+C1 Y 0 0.001
+.tran 0 10ms 0
+.backanno
+.end
