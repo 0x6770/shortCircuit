@@ -6,6 +6,7 @@
 #include <vector>
 #include <cassert>
 #include <limits>
+#include <cmath>
 
 using namespace std;
 
@@ -137,6 +138,46 @@ public:
         }
         _voltage = voltage;
     }
+    double getFrequency(){
+        return _frequency;
+    }
+    double getVoltage(double t){
+        return _voltage;
+    }
+    complex<double> getValue(double f, double t){
+        return complex<double> (0.0,0.0);
+    }
+};
+
+class SIN_voltage: public Component{
+private:
+    double _amplitude;
+    double _frequency;
+public:
+    SIN_voltage(string pin1, string pin2, double amplitude, double frequency)
+    {
+        assert(pin1 != pin2);
+        if (pin1 < pin2)
+        {
+            _pin1 = pin1;
+            _pin2 = pin2;
+        }
+        else
+        {
+            _pin1 = pin2;
+            _pin2 = pin1;
+        }
+        _amplitude = amplitude;
+        _frequency = frequency;
+    }
+    double getFrequency(){
+        return _frequency;
+    }
+    double getVoltage(double t){
+        double result;
+        result = _amplitude * sin(2.0 * M_PI * f * t);
+        return result;
+    }
     complex<double> getValue(double f, double t){
         return complex<double> (0.0,0.0);
     }
@@ -161,10 +202,12 @@ public:
         }
         _current = current;
     }
+    double getCurrent(double t){
+        return _current;
+    }
     complex<double> getValue(double f, double t){
         return complex<double> (0.0,0.0);
     }
-
 };
 
 
