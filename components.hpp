@@ -5,6 +5,7 @@
 #include <complex>
 #include <vector>
 #include <cassert>
+#include <limits>
 
 using namespace std;
 
@@ -46,6 +47,11 @@ public:
         }
         _inductance = inductance;
     }
+
+    double getInductance(){
+        return _inductance;
+    }
+
     complex<double> getValue(double f, double t)
     {
         return complex<double>(0.0, -1.0 / (2.0 * M_PI * f * _inductance));
@@ -74,6 +80,9 @@ public:
         _capacitance = capacitance;
     }
 
+    double getCapacitance(){
+        return _capacitance;
+    }
     complex<double> getValue(double f, double t)
     {
         return complex<double>(0.0, 2.0 * M_PI * f * _capacitance);
@@ -107,6 +116,57 @@ public:
         return complex<double>((1.0 / _resistance), 0.0);
     }
 };
+
+class DC_voltage: public Component{
+private:
+    double _voltage;
+    double _frequency = 0;
+public:
+    DC_voltage(string pin1, string pin2, double voltage)
+    {
+        assert(pin1 != pin2);
+        if (pin1 < pin2)
+        {
+            _pin1 = pin1;
+            _pin2 = pin2;
+        }
+        else
+        {
+            _pin1 = pin2;
+            _pin2 = pin1;
+        }
+        _voltage = voltage;
+    }
+    complex<double> getValue(double f, double t){
+        return complex<double> (0.0,0.0);
+    }
+};
+
+class current_source: public Component{
+private:
+    double _current;
+public:
+    current_source(string pin1, string pin2, double current){
+        assert(pin1 != pin2);
+        if (pin1 < pin2)
+        {
+            _pin1 = pin1;
+            _pin2 = pin2;
+        }
+        else
+        {
+            _pin1 = pin2;
+            _pin2 = pin1;
+        }
+        _current = current;
+    }
+    complex<double> getValue(double f, double t){
+        return complex<double> (0.0,0.0);
+    }
+
+};
+
+
 
 // voltage source
 class Voltage : public Component
