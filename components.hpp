@@ -24,7 +24,9 @@ public:
         return pin;
     }
     virtual complex<double> getValue(double f, double t){};
+    virtual string get_type(){};
     virtual ~Component(){};
+    
 };
 
 class Inductor : public Component
@@ -51,6 +53,17 @@ public:
 
     double getInductance(){
         return _inductance;
+    }
+
+
+    double cache_current(double t){
+        //return the current at time t
+    }
+
+    double get_voltage(double t){
+        //require an extra parameter: timestep
+        //require a library for numerical differentiation
+        //return differentiate(cache_current(t - timestep))*L with respect to t
     }
 
     complex<double> getValue(double f, double t)
@@ -84,6 +97,17 @@ public:
     double getCapacitance(){
         return _capacitance;
     }
+
+    double cache_current(double t){
+        //to store the current at time t
+    }
+
+    double get_voltage(double t){
+        //require an extra parameter: timestep
+        //require a library for numerical integration
+        //return integrate(cache_current(t - timestep)/C) with respect to t
+    }
+
     complex<double> getValue(double f, double t)
     {
         return complex<double>(0.0, 2.0 * M_PI * f * _capacitance);
@@ -122,6 +146,7 @@ class DC_voltage: public Component{
 private:
     double _voltage;
     double _frequency = 0;
+    string type = "power_source";
 public:
     DC_voltage(string pin1, string pin2, double voltage)
     {
@@ -147,12 +172,17 @@ public:
     complex<double> getValue(double f, double t){
         return complex<double> (0.0,0.0);
     }
+
+    string get_type(){
+        return type;
+    }
 };
 
 class SIN_voltage: public Component{
 private:
     double _amplitude;
     double _frequency;
+    string type = "power_source";
 public:
     SIN_voltage(string pin1, string pin2, double amplitude, double frequency)
     {
@@ -181,12 +211,17 @@ public:
     complex<double> getValue(double f, double t){
         return complex<double> (0.0,0.0);
     }
+
+    string get_type(){
+        return type;
+    }
 };
 
 
 class current_source: public Component{
 private:
     double _current;
+    //string type = "power_source";
 public:
     current_source(string pin1, string pin2, double current){
         assert(pin1 != pin2);
@@ -217,8 +252,13 @@ class Voltage : public Component
 {
 private:
     double _voltage;
+    string type = "power_source";
 
 public:
+    string get_type(){
+        return type;
+    }
+
     Voltage(string pin1, string pin2, double voltage)
     {
         assert(pin1 != pin2);

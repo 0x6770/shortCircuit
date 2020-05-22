@@ -5,6 +5,10 @@
 #include <iterator>
 #include "components.hpp"
 
+vector<string> remove_duplicates(vector<string> &nums);
+
 vector<string> find_nodes(vector<Component *> circuit);
+
+
 
 #endif
