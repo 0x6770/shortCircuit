@@ -25,6 +25,7 @@ public:
     }
     virtual complex<double> getValue(double f, double t){};
     virtual string get_type(){};
+    virtual double getFrequency(){};
     virtual ~Component(){};
     
 };
@@ -33,6 +34,7 @@ class Inductor : public Component
 {
 private:
     double _inductance;
+    string _type = "inductor";
 
 public:
     Inductor(string pin1, string pin2, double inductance)
@@ -54,7 +56,9 @@ public:
     double getInductance(){
         return _inductance;
     }
-
+    string get_type(){
+        return _type;
+    }
 
     double cache_current(double t){
         //return the current at time t
@@ -76,6 +80,7 @@ class Capacitor : public Component
 {
 private:
     double _capacitance;
+    string _type = "capacitor";
 
 public:
     Capacitor(string pin1, string pin2, double capacitance)
@@ -98,6 +103,9 @@ public:
         return _capacitance;
     }
 
+    string get_type(){
+        return _type;
+    }
     double cache_current(double t){
         //to store the current at time t
     }
@@ -118,7 +126,7 @@ class Resistor : public Component
 {
 private:
     double _resistance;
-
+    string _type = "resistor";
 public:
     Resistor(string pin1, string pin2, double resistance)
     {
@@ -135,6 +143,9 @@ public:
         }
         _resistance = resistance;
     }
+    string get_type(){
+        return _type;
+    }
 
     complex<double> getValue(double f, double t)
     {
@@ -146,7 +157,7 @@ class DC_voltage: public Component{
 private:
     double _voltage;
     double _frequency = 0;
-    string type = "power_source";
+    string _type = "power_source";
 public:
     DC_voltage(string pin1, string pin2, double voltage)
     {
@@ -174,7 +185,7 @@ public:
     }
 
     string get_type(){
-        return type;
+        return _type;
     }
 };
 
@@ -182,7 +193,7 @@ class SIN_voltage: public Component{
 private:
     double _amplitude;
     double _frequency;
-    string type = "power_source";
+    string _type = "power_source";
 public:
     SIN_voltage(string pin1, string pin2, double amplitude, double frequency)
     {
@@ -205,7 +216,7 @@ public:
     }
     double getVoltage(double t){
         double result;
-        result = _amplitude * sin(2.0 * M_PI * f * t);
+        result = _amplitude * sin(2.0 * M_PI * _frequency * t);
         return result;
     }
     complex<double> getValue(double f, double t){
@@ -213,7 +224,7 @@ public:
     }
 
     string get_type(){
-        return type;
+        return _type;
     }
 };
 
@@ -252,11 +263,11 @@ class Voltage : public Component
 {
 private:
     double _voltage;
-    string type = "power_source";
+    string _type = "power_source";
 
 public:
     string get_type(){
-        return type;
+        return _type;
     }
 
     Voltage(string pin1, string pin2, double voltage)
