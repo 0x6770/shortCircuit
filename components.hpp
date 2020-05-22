@@ -142,6 +142,7 @@ public:
     }
 };
 
+
 class current_source: public Component{
 private:
     double _current;
