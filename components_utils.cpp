@@ -67,6 +67,7 @@ map<Component*,pair<string,string>> components_nodes(vector<Component *> circuit
     return result;
 }
 
+
 Component* get_component(string node1,string node2,map<Component*,pair<string,string>> component_nodes){
     pair<string,string> nodes_forward  = make_pair(node1,node2);
     pair<string,string> nodes_reverse  = make_pair(node2,node1);
@@ -81,9 +82,7 @@ Component* get_component(string node1,string node2,map<Component*,pair<string,st
 complex<double> find_conductance(string node1, string node2, vector<Component *> circuit,double f, double t,map<Component*,pair<string,string>> component_nodes){
     vector<Component*> temp;
     if(node1 == node2){
-        //cout << "enter here1" << endl;
         for(int i = 0;i < circuit.size();i++){
-            //cout << is_powersource(circuit[i]) << endl;
             if(!is_powersource(circuit[i])){
                 if(circuit[i]->getPin(1) == node1 or circuit[i]->getPin(2) == node2 ){
                   temp.push_back(circuit[i]);
@@ -92,7 +91,6 @@ complex<double> find_conductance(string node1, string node2, vector<Component *>
         }
         complex<double> result = complex<double>(0.0,0.0);
         for(int i = 0;i<temp.size();i++){
-            //cout << "enter here2" << endl;
             result = result + temp[i]->getValue(f,t);
         }
         return result;
@@ -109,19 +107,19 @@ int main(){
     Component *R1 = new Resistor("1", "3", 2);
     Component *R2 = new Resistor("2", "3", 2);
     Component *R3 = new Resistor("1", "2", 5);
-    Component *R4 = new Resistor("2", "0", 1.25);
-    Component *R5 = new Resistor("2", "4", 10);
+    Component *R4 = new Resistor("0", "2", 1.25);
+    Component *R5 = new Resistor("4", "2", 10);
     Component *R6 = new Resistor("4", "0", 5);
     Component *R7 = new Resistor("4","5",2.5);
-    Component *V1 = new DC_voltage("1","0",13);
-    Component *V2 = new DC_voltage("3","5",8);
-    Component *V3 = new DC_voltage("5","0",20);
-    Component *V4 = new DC_voltage("2","4",10);
-    vector<Component *> circuit = {V1,R1,R2,R3,V2};
+    Component *V1 = new DC_voltage("2","4",10);
+    Component *I1 = new current_source("1","0",13);
+    Component *I2 = new current_source("3","5",8);
+    Component *I3 = new current_source("5","0",20);
+    vector<Component *> circuit = {R1,R2,R3,R4,R5,R6,R7,V1,I1,I2,I3};
     map<Component*,pair<string,string>> test = components_nodes(circuit);
     //cout << test.size() << endl;
     double time = 2.0;
     double f = V1->getFrequency();
     //for(auto v:test) cout << v.first->getPin(1) << " " << v.first->getPin(2) << " " << endl;
-    cout << find_conductance("1","1",circuit,f,time,test) << endl;
+    cout << find_conductance("5","5",circuit,f,time,test) << endl;
 }

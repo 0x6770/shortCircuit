@@ -232,7 +232,7 @@ public:
 class current_source: public Component{
 private:
     double _current;
-    //string type = "power_source";
+    string _type = "power_source";
 public:
     current_source(string pin1, string pin2, double current){
         assert(pin1 != pin2);
@@ -250,6 +250,9 @@ public:
     }
     double getCurrent(double t){
         return _current;
+    }
+    string get_type(){
+        return _type;
     }
     complex<double> getValue(double f, double t){
         return complex<double> (0.0,0.0);
