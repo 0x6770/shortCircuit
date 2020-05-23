@@ -26,7 +26,6 @@ public:
     virtual complex<double> getValue(double f, double t){};
     virtual string get_type(){};
     virtual ~Component(){};
-    
 };
 
 class Inductor : public Component
@@ -51,16 +50,18 @@ public:
         _inductance = inductance;
     }
 
-    double getInductance(){
+    double getInductance()
+    {
         return _inductance;
     }
 
-
-    double cache_current(double t){
+    double cache_current(double t)
+    {
         //return the current at time t
     }
 
-    double get_voltage(double t){
+    double get_voltage(double t)
+    {
         //require an extra parameter: timestep
         //require a library for numerical differentiation
         //return differentiate(cache_current(t - timestep))*L with respect to t
@@ -94,15 +95,18 @@ public:
         _capacitance = capacitance;
     }
 
-    double getCapacitance(){
+    double getCapacitance()
+    {
         return _capacitance;
     }
 
-    double cache_current(double t){
+    double cache_current(double t)
+    {
         //to store the current at time t
     }
 
-    double get_voltage(double t){
+    double get_voltage(double t)
+    {
         //require an extra parameter: timestep
         //require a library for numerical integration
         //return integrate(cache_current(t - timestep)/C) with respect to t
@@ -142,11 +146,13 @@ public:
     }
 };
 
-class DC_voltage: public Component{
+class DC_voltage : public Component
+{
 private:
     double _voltage;
     double _frequency = 0;
     string type = "power_source";
+
 public:
     DC_voltage(string pin1, string pin2, double voltage)
     {
@@ -163,26 +169,32 @@ public:
         }
         _voltage = voltage;
     }
-    double getFrequency(){
+    double getFrequency()
+    {
         return _frequency;
     }
-    double getVoltage(double t){
+    double getVoltage(double t)
+    {
         return _voltage;
     }
-    complex<double> getValue(double f, double t){
-        return complex<double> (0.0,0.0);
+    complex<double> getValue(double f, double t)
+    {
+        return complex<double>(0.0, 0.0);
     }
 
-    string get_type(){
+    string get_type()
+    {
         return type;
     }
 };
 
-class SIN_voltage: public Component{
+class SIN_voltage : public Component
+{
 private:
     double _amplitude;
     double _frequency;
     string type = "power_source";
+
 public:
     SIN_voltage(string pin1, string pin2, double amplitude, double frequency)
     {
@@ -200,30 +212,35 @@ public:
         _amplitude = amplitude;
         _frequency = frequency;
     }
-    double getFrequency(){
+    double getFrequency()
+    {
         return _frequency;
     }
-    double getVoltage(double t){
+    double getVoltage(double f, double t)
+    {
         double result;
         result = _amplitude * sin(2.0 * M_PI * f * t);
         return result;
     }
-    complex<double> getValue(double f, double t){
-        return complex<double> (0.0,0.0);
+    complex<double> getValue(double f, double t)
+    {
+        return complex<double>(0.0, 0.0);
     }
 
-    string get_type(){
+    string get_type()
+    {
         return type;
     }
 };
 
-
-class current_source: public Component{
+class current_source : public Component
+{
 private:
     double _current;
     //string type = "power_source";
 public:
-    current_source(string pin1, string pin2, double current){
+    current_source(string pin1, string pin2, double current)
+    {
         assert(pin1 != pin2);
         if (pin1 < pin2)
         {
@@ -237,15 +254,15 @@ public:
         }
         _current = current;
     }
-    double getCurrent(double t){
+    double getCurrent(double t)
+    {
         return _current;
     }
-    complex<double> getValue(double f, double t){
-        return complex<double> (0.0,0.0);
+    complex<double> getValue(double f, double t)
+    {
+        return complex<double>(0.0, 0.0);
     }
 };
-
-
 
 // voltage source
 class Voltage : public Component
@@ -255,7 +272,8 @@ private:
     string type = "power_source";
 
 public:
-    string get_type(){
+    string get_type()
+    {
         return type;
     }
 
