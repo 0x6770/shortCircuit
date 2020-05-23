@@ -157,7 +157,7 @@ class DC_voltage: public Component{
 private:
     double _voltage;
     double _frequency = 0;
-    string _type = "power_source";
+    string _type = "power_source_independent";
 public:
     DC_voltage(string pin1, string pin2, double voltage)
     {
@@ -232,7 +232,7 @@ public:
 class current_source: public Component{
 private:
     double _current;
-    string _type = "power_source";
+    string _type = "power_source_independent";
 public:
     current_source(string pin1, string pin2, double current){
         assert(pin1 != pin2);
