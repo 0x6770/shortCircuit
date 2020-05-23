@@ -17,6 +17,7 @@ private:
     double voltage;
     vector<Component*> components;
     bool isGround;
+    string name; //optional: better to add a name to each node
 
 public:
     Node(){};

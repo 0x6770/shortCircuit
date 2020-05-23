@@ -55,3 +55,11 @@ double Component::get_current(){
 double Component::get_value(){
     return value;
 }
+
+void Component::store_conductance(complex<double> temp){
+    conductance = temp;
+}
+
+complex<double> Component::get_conductance(){
+    return conductance;
+}
