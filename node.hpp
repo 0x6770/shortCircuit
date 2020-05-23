@@ -22,11 +22,19 @@ private:
 public:
     Node(){};
 
+    Node(double vol, vector<Component*> temp, bool ground){
+        voltage = vol;
+        components = temp;
+        isGround = ground;
+    }
+
     ~Node(){};
 
-    double get_voltage();
-    bool is_ground();
-    int get_num_of_components();
+    void set_node(double vol, vector<Component*> temp,bool ground);
+
+    double get_voltage(); //checked
+    bool is_ground(); //checked
+    int get_num_of_components(); //checked
     vector<Component*> get_components();
 
 };

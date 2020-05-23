@@ -19,3 +19,10 @@ bool Node::is_ground(){
 vector<Component*> Node::get_components(){
     return components;
 }
+
+void Node::set_node(double vol, vector<Component*> temp,bool ground){
+    voltage = vol;
+    components = temp;
+    isGround = ground;
+    if(is_ground()){ voltage = 0;}
+}

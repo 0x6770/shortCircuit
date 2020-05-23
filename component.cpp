@@ -9,7 +9,7 @@ Component::Component(string temp_type, double val, Node* m1, Node* m2){
     n2 = m2;
     voltage = m1->get_voltage() - m2->get_voltage();
     if(type == "resistor"){
-        current = -1 * voltage/value;
+        current = -1 * get_voltage()/value;
     }else if(type == "current_source"){
         current = value;
     }else{
@@ -44,7 +44,7 @@ double Component::get_voltage(){
 
 double Component::get_current(){
     if(type == "resistor"){
-        return -1 * voltage/value;
+        return -1.00 * (get_voltage())/value;
     }else if(type == "current_source"){
         return value;
     }else{
@@ -54,10 +54,6 @@ double Component::get_current(){
 
 double Component::get_value(){
     return value;
-}
-
-void Component::store_conductance(complex<double> temp){
-    conductance = temp;
 }
 
 complex<double> Component::get_conductance(){

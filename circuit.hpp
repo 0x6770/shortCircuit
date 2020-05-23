@@ -19,16 +19,26 @@ private:
     vector<complex<double>> conductance;
 
 public:
-    vector<complex<double>> get_conductance();
+    Circuit(){};
 
-    void store_conductance();
+    ~Circuit(){};
+
+    Circuit(double f1, double t1, vector<Component*> temp){
+        f = f1;
+        t = t1;
+        comp = temp;
+    }
+
+    vector<complex<double>> get_conductance(); //done & checked
+
+    void store_conductance(); //requires work to be done
 
     double get_freq();
     double get_time();
 
     vector<Component*> get_comp();
 
-    complex<double> get_node_conductance(Node *a, Node *b); //TODO
+    complex<double> get_node_conductance(Node *a, Node *b);
 };
 
 #endif

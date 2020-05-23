@@ -34,7 +34,7 @@ vector<complex<double>> Circuit::get_conductance(){
 void Circuit::store_conductance(){
     vector<complex<double>> temp = get_conductance();
     for(int i = 0; i < temp.size(); i++){
-        comp[i]->store_conductance(temp[i]);
+        comp[i]->conductance = temp[i];
     }
 }
 

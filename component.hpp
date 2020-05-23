@@ -20,15 +20,15 @@ public:
 
     ~Component(){};
 
-    double get_voltage(); //done
-    double get_current(); //TODO: missing capacitor and inductor
-    double get_value(); //done
+    double get_voltage(); //done & checked
+    double get_current(); //TODO: missing capacitor and inductor //checked for resistor
+    double get_value(); //done &  checked
     complex<double> get_conductance();
     Node* get_node1(); //done
     Node* get_node2(); //done
-    string get_type(); //return type
+    string get_type(); //done & checked
     bool is_power_source(); //return true if type == voltage_source or current_source
-    void store_conductance(complex<double> temp);
+    friend class Circuit; //can access any member in this class
 
 private:
     Node* n1;
@@ -38,7 +38,6 @@ private:
     double value;
     complex<double> conductance;
     string type; //type == "current_source" or "voltage_source" or "resistor" or "inductor" or "capacitor"
-
 };
 
 
