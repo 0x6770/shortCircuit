@@ -54,3 +54,19 @@ void Node::set_voltage(double vol){
 void Node::set_name(string temp){
     name = temp;
 }
+
+string Node::get_name(){
+    return name;
+}
+
+
+bool Node::operator==(Node *a){
+    if(get_name() == a->get_name()){
+        return true;
+    }
+    return false;
+}
+
+void Node::store_comp(Component* t){
+    components.push_back(t);
+}

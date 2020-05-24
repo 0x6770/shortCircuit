@@ -17,7 +17,7 @@ private:
     double voltage;
     vector<Component*> components;
     bool isGround;
-    string name; //optional: better to add a name to each node
+    string name;
 
 public:
     Node(){}; //(1)
@@ -27,6 +27,8 @@ public:
     Node(double vol, bool ground); //frequently used (3)
 
     Node(vector<Component*> temp, bool ground); //frequently used (4)
+
+    bool check_equal(Node *a, Node *b);
 
 
     ~Node(){};
@@ -39,10 +41,15 @@ public:
 
     void set_name(string temp); //node name is set when component is read
 
+    void store_comp(Component* t); //store component in node
+
     double get_voltage(); //checked
     bool is_ground(); //checked
     int get_num_of_components(); //checked
+    string get_name(); //checked
     vector<Component*> get_components();
+
+    bool operator==(Node *a);
 
 };
 

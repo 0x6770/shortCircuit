@@ -49,3 +49,47 @@ complex<double> Circuit::get_node_conductance(Node *a, Node *b){
     return output;
 }
 
+bool equal_node(Node *a, Node *b){
+    if(a->get_name() == b->get_name()){
+        return true;
+    }
+    return false;
+}
+
+vector<Node*> Circuit::get_nod(){
+    return nod;
+}
+
+bool Circuit::check_node_inside_nod(Node *temp){
+    bool output = false;
+    for(int i = 0; i < nod.size(); i++){
+        if(equal_node(temp,nod[i])){
+            output = true;
+            break;
+        }
+    }
+    return output;
+}
+
+
+void Circuit::store_node(){
+    nod.push_back(comp[0]->n1);
+    nod.push_back(comp[0]->n2);
+    for(int i = 1; i < comp.size(); i++){
+        if(!check_node_inside_nod(comp[i]->n1)){
+            nod.push_back(comp[i]->n1);
+        }
+        if(!check_node_inside_nod(comp[i]->n2)){
+            nod.push_back(comp[i]->n2);
+        }
+    }
+
+    for(int i = 0; i < comp.size(); i++){
+        for(int j = 0; j < nod.size(); j++){
+            if(equal_node(comp[i]->n1,nod[j]) or equal_node(comp[i]->n2,nod[j])) {
+                nod[j]->store_comp(comp[i]);
+            }
+
+        }
+    }
+}

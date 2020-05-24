@@ -16,6 +16,7 @@ private:
     double f;
     double t;
     vector<Component*> comp;
+    vector<Node*> nod;
     vector<complex<double>> conductance;
 
 public:
@@ -31,12 +32,15 @@ public:
 
     vector<complex<double>> get_conductance(); //done & checked
 
-    void store_conductance(); //requires work to be done
+    void store_conductance(); //done
+    void store_node(); //TODO: requires work to be done
+    bool check_node_inside_nod(Node *temp); //TODO: helper function for store_node
 
     double get_freq();
     double get_time();
 
     vector<Component*> get_comp();
+    vector<Node*> get_nod();
 
     complex<double> get_node_conductance(Node *a, Node *b);
 };

@@ -28,7 +28,7 @@ double parse_number(string input){
     }else if(multiplier == ""){}
     else{
         cerr << "ERROR: invalid syntax, cannot parse" << input << endl;
-        exit(0);
+        exit(1);
     }
     return result;
 }
