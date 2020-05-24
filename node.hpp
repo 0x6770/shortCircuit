@@ -16,7 +16,7 @@ class Node{
 private:
     double voltage;
     vector<Component*> components;
-    bool isGround;
+    bool isGround = false;
     string name;
 
 public:
@@ -48,6 +48,7 @@ public:
     int get_num_of_components(); //checked
     string get_name(); //checked
     vector<Component*> get_components();
+    void set_is_ground();
 
     bool operator==(Node *a);
 

@@ -1,7 +1,7 @@
 #include "components_parser.hpp"
 
 double parse_number(string input){
-    assert(!isalpha(input[0])); //question
+    //assert(!isalpha(input[0])); //question
     assert(!input.empty());
 
     double result = 0.0;

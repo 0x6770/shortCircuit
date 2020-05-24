@@ -93,3 +93,19 @@ void Circuit::store_node(){
         }
     }
 }
+
+Node* Circuit::get_ground(){
+    for(int i = 0;i<nod.size();i++){
+        if(nod[i]->is_ground == true)
+            return nod[i];
+    }
+    return nullptr;
+}
+
+void Circuit::set_ground(string ground){
+    for(int i = 0;i < nod.size();i++){
+        if(nod[i]->get_name() == ground){
+            nod[i].set_is_ground = true;
+        }
+    }
+}

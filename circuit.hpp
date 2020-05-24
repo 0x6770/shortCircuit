@@ -42,6 +42,10 @@ public:
     vector<Component*> get_comp();
     vector<Node*> get_nod();
 
+    Node* get_ground();
+    void set_ground(string ground);
+
+
     complex<double> get_node_conductance(Node *a, Node *b);
 };
 

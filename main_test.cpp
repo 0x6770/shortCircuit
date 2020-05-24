@@ -24,16 +24,23 @@ int main(){
     string component_2 = "R2 N001 N002 300";
     vector<Component *> compt;
     vector<string>
-            component_strings = {"R1 N001 N003 1k",
-                                 "C1 N001 0 1μ ",
-                                 "L1 N002 N001 1m",
-                                 "R2 N002 N001 1Meg "};
+            component_strings = {"V1 2 4 10",
+                                 "R1 1 3 2",
+                                 "R2 1 2 5",
+                                 "R3 2 3 2",
+                                 "R4 2 0 1.25",
+                                 "R5 4 0 5",
+                                 "R6 4 5 2.5",
+                                 "R7 2 4 10",
+                                 "I1 1 0 13",
+                                 "I2 3 5 8",
+                                 "V2 5 0 20"};
     for (auto it = component_strings.begin(); it != component_strings.end(); it++)
     {
         compt.push_back(parse_component(*it));
     }
 
-    cout << compt.size() << endl;
+   // cout << compt.size() << endl;
 
     double f = 1000, t = 0.001;
     Circuit *total = new Circuit(f,t,compt);
@@ -41,18 +48,17 @@ int main(){
     total->store_node();
     vector<complex<double>> output = total->get_conductance();
     for(int i = 0; i < output.size(); i++){
-        cout << output[i] << endl;
+        //cout << output[i] << endl;
     }
 
     vector<Node*> num = total->get_nod();
     cout << num.size() << endl;
     for(int i = 0; i < num.size(); i++) {
-        cout << num[i]->get_name() << endl;
+        cout << num[i]->get_name() <<" " << (bool)num[i]->is_ground()<<  endl;
     }
     //cout << num[1]->get_num_of_components() << endl;
 
 
-    cout << total->get_node_conductance(num[0],num[1]);
     //cout << get_node_conductance();
 
     //Circuit *total = new Circuit(5.00,5.00,temp);

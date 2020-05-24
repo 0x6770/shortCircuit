@@ -3,6 +3,7 @@
 
 #include "component.hpp"
 #include "node.hpp"
+#include <cassert>
 
 /**
  * @brief parser text based number to double
