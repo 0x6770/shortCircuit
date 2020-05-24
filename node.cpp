@@ -2,6 +2,26 @@
 #include "component.hpp"
 #include "circuit.hpp"
 using namespace std;
+#include <cassert>
+
+Node::Node(double vol, vector<Component*> temp, bool ground){
+    voltage = vol;
+    components = temp;
+    isGround = ground;
+    assert(isGround and vol == 0);
+    if(is_ground()){ voltage = 0; }
+}
+
+Node::Node(vector<Component*> temp, bool ground){
+    components = temp;
+    isGround = ground;
+    if(is_ground()){ voltage = 0; }
+}
+
+Node::Node(bool ground){
+    isGround = ground;
+    if(is_ground()){ voltage = 0; }
+}
 
 
 double Node::get_voltage(){
@@ -25,4 +45,12 @@ void Node::set_node(double vol, vector<Component*> temp,bool ground){
     components = temp;
     isGround = ground;
     if(is_ground()){ voltage = 0;}
+}
+
+void Node::set_node(vector<Component*> temp){
+    components = temp;
+}
+
+void Node::set_voltage(double vol){
+    voltage = vol;
 }

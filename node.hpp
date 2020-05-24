@@ -20,17 +20,22 @@ private:
     string name; //optional: better to add a name to each node
 
 public:
-    Node(){};
+    Node(){}; //(1)
 
-    Node(double vol, vector<Component*> temp, bool ground){
-        voltage = vol;
-        components = temp;
-        isGround = ground;
-    }
+    Node(double vol, vector<Component*> temp, bool ground); //not frequently used (2)
+
+    Node(double vol, bool ground); //frequently used (3)
+
+    Node(vector<Component*> temp, bool ground); //frequently used (4)
+
 
     ~Node(){};
 
-    void set_node(double vol, vector<Component*> temp,bool ground);
+    void set_node(double vol, vector<Component*> temp,bool ground); //match with (1)
+
+    void set_node(vector<Component*> temp); //match with (3)
+
+    void set_voltage(double vol); //match with (4)
 
     double get_voltage(); //checked
     bool is_ground(); //checked

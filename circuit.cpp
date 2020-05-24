@@ -48,3 +48,4 @@ complex<double> Circuit::get_node_conductance(Node *a, Node *b){
     }}
     return output;
 }
+

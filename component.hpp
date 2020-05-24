@@ -16,6 +16,10 @@ class Component{
 public:
     Component(string temp_type, double val, Node* m1, Node* m2);
 
+    Component(string temp_type, double val); //default input
+
+    void set_node(Node *m1, Node *m2); //function to set node
+
     Component(){};
 
     ~Component(){};
@@ -23,7 +27,7 @@ public:
     double get_voltage(); //done & checked
     double get_current(); //TODO: missing capacitor and inductor //checked for resistor
     double get_value(); //done &  checked
-    complex<double> get_conductance();
+    complex<double> get_conductance(); //done & checked
     Node* get_node1(); //done
     Node* get_node2(); //done
     string get_type(); //done & checked

@@ -17,6 +17,24 @@ Component::Component(string temp_type, double val, Node* m1, Node* m2){
     }
 }
 
+Component::Component(string temp_type, double val){
+    type = temp_type;
+    value = val;
+}
+
+void Component::set_node(Node *m1, Node *m2){
+    n1 = m1;
+    n2 = m2;
+    voltage = m1->get_voltage() - m2->get_voltage();
+    if(type == "resistor"){
+        current = -1 * get_voltage()/value;
+    }else if(type == "current_source"){
+        current = value;
+    }else{
+        current = 0;
+    }
+}
+
 
 string Component::get_type(){
     return type;
