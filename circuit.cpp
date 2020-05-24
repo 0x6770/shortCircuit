@@ -14,6 +14,7 @@ vector<Component*> Circuit::get_comp(){
     return comp;
 }
 
+//get conductance of a single component
 vector<complex<double>> Circuit::get_conductance(){
     vector<Component*> temp = get_comp();
     vector<complex<double>> output;
@@ -46,6 +47,9 @@ complex<double> Circuit::get_node_conductance(Node *a, Node *b){
     { if (std::find(y.begin(), y.end(), *i) != y.end()){
         output += (*i)->get_conductance();
     }}
+    if(!(a==b)){
+        output = (complex<double>) -1.0 * output;
+    }
     return output;
 }
 
@@ -94,18 +98,32 @@ void Circuit::store_node(){
     }
 }
 
+//helper function for the eliminate the ground node when calculating the nodes conductance matrix..
 Node* Circuit::get_ground(){
     for(int i = 0;i<nod.size();i++){
-        if(nod[i]->is_ground == true)
+        if(nod[i]->is_ground() == true)
             return nod[i];
     }
     return nullptr;
 }
 
+//helper function for the eliminate the ground node when calculating the nodes conductance matrix..
 void Circuit::set_ground(string ground){
     for(int i = 0;i < nod.size();i++){
         if(nod[i]->get_name() == ground){
-            nod[i].set_is_ground = true;
+            nod[i]->set_is_ground();
         }
     }
+}
+
+//change the vector of Nodes inside the circuit private member
+//get the nodes without the ground node
+void Circuit::eliminate_ground_node(string ground){
+    set_ground(ground);
+    Node* GND = get_ground();
+    auto it = find(nod.begin(),nod.end(),GND);
+    if((*it)->get_name() == GND->get_name()){
+        nod.erase(it);
+    }
+
 }

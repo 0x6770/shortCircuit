@@ -47,6 +47,7 @@ public:
 
 
     complex<double> get_node_conductance(Node *a, Node *b);
+    void eliminate_ground_node(string ground);
 };
 
 #endif

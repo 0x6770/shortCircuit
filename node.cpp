@@ -70,3 +70,7 @@ bool Node::operator==(Node *a){
 void Node::store_comp(Component* t){
     components.push_back(t);
 }
+
+void Node::set_is_ground(){
+    isGround = true;
+}
