@@ -34,6 +34,8 @@ public:
     bool is_power_source(); //return true if type == voltage_source or current_source
     friend class Circuit; //can access any member in this class
 
+    void set_comp(string type1, double value1, Node* m1, Node* m2);
+
 private:
     Node* n1;
     Node* n2;

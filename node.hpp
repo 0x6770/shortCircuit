@@ -37,6 +37,8 @@ public:
 
     void set_voltage(double vol); //match with (4)
 
+    void set_name(string temp); //node name is set when component is read
+
     double get_voltage(); //checked
     bool is_ground(); //checked
     int get_num_of_components(); //checked

@@ -77,3 +77,10 @@ double Component::get_value(){
 complex<double> Component::get_conductance(){
     return conductance;
 }
+
+void Component::set_comp(string type1,double value1, Node* m1, Node* m2){
+    type = type1;
+    value = value1;
+    n1 = m1;
+    n2 = m2;
+}

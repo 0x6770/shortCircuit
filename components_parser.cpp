@@ -37,8 +37,31 @@ Component *parse_component(string input){
     stringstream ss;
     ss << input;
     Component *temp = new Component();
-    //string name, pin1, pin2, type;
+    Node *t0 = new Node();
+    Node *t1 = new Node();
+    string name, pin1, pin2, type, value;
+    ss >> name >> pin1 >> pin2 >> value;
+    double real_value = parse_number(value);
 
+    if(name[0] == 'V'){
+        type = "voltage_source";
+    }else if(name[0] == 'I'){
+        type = "current_source";
+    }else if(name[0] == 'R'){
+        type = "resistor";
+    }else if(name[0] == 'L'){
+        type = "inductor";
+    }else if(name[0] == 'C'){
+        type = "capacitor";
+    }else{
+        cerr << "unrecognised type" << name << endl;
+        exit(1);
+    }
+
+    t0->set_name(pin1);
+    t1->set_name(pin2);
+    temp->set_comp(type,real_value,t0,t1);
+    return temp;
 }
 
 vector<double> generate_instants(string directive){

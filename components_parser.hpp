@@ -1,7 +1,8 @@
 #ifndef components_parse_hpp
 #define components_parse_hpp
 
-#include "components.hpp"
+#include "component.hpp"
+#include "node.hpp"
 
 /**
  * @brief parser text based number to double
@@ -9,8 +10,7 @@
  * @param input a text based number likes 1p, 1n, 1μ, 1m, 1, 1k, 1Meg
  * @return double result number
  */
-double
-parse_number(string input);
+double parse_number(string input);
 
 /**
  * @brief create component from given string

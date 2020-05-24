@@ -18,10 +18,6 @@ Node::Node(vector<Component*> temp, bool ground){
     if(is_ground()){ voltage = 0; }
 }
 
-Node::Node(bool ground){
-    isGround = ground;
-    if(is_ground()){ voltage = 0; }
-}
 
 
 double Node::get_voltage(){
@@ -53,4 +49,8 @@ void Node::set_node(vector<Component*> temp){
 
 void Node::set_voltage(double vol){
     voltage = vol;
+}
+
+void Node::set_name(string temp){
+    name = temp;
 }
