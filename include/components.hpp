@@ -13,291 +13,174 @@ using namespace std;
 class Component
 {
 protected:
-    string _pin1;
-    string _pin2;
+    string _type;
+    string _node_p;
+    string _node_n;
+    double _property = 0;
+    double _bias = 0.0;
+    double _amplitude = 0.0;
+    double _frequency = 0.0;
+    bool _is_grounded = false;
 
 public:
-    Component(){};
-    string getPin(int n)
+    Component() {}
+    string get_node(string x)
     {
-        string pin = n == 1 ? _pin1 : _pin2;
-        return pin;
+        string node = x == "p" ? _node_p : _node_n;
+        return node;
     }
-    virtual complex<double> getValue(double f, double t){};
-    virtual string get_type(){};
-    virtual ~Component(){};
+    bool contain_node(string node)
+    {
+        if (node == _node_p || node == _node_n)
+        {
+            return true;
+        }
+        return false;
+    }
+    bool check_grounded()
+    {
+        return _is_grounded;
+    }
+    virtual double get_voltage(double t)
+    {
+        double result = 0.0;
+        return result;
+    }
+    virtual double get_current(double t)
+    {
+        double result = 0.0;
+        return result;
+    }
+    virtual complex<double> get_conductance(double f)
+    {
+        complex<double> result = {0.0, 0.0};
+        return result;
+    }
+    string get_type()
+    {
+        return _type;
+    }
+    virtual ~Component() {}
 };
 
 class Inductor : public Component
 {
-private:
-    double _inductance;
-
 public:
-    Inductor(string pin1, string pin2, double inductance)
+    Inductor(string node_p, string node_n, double property)
     {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _inductance = inductance;
+        assert(node_p != node_n);
+        _type = "L";
+        _node_p = node_p;
+        _node_n = node_n;
+        _property = property;
     }
 
-    double getInductance()
+    complex<double> get_conductance(double f)
     {
-        return _inductance;
-    }
-
-    double cache_current(double t)
-    {
-        //return the current at time t
-    }
-
-    double get_voltage(double t)
-    {
-        //require an extra parameter: timestep
-        //require a library for numerical differentiation
-        //return differentiate(cache_current(t - timestep))*L with respect to t
-    }
-
-    complex<double> getValue(double f, double t)
-    {
-        return complex<double>(0.0, -1.0 / (2.0 * M_PI * f * _inductance));
+        return complex<double>(0.0, -1.0 / (2.0 * M_PI * f * _property));
     }
 };
 
 class Capacitor : public Component
 {
-private:
-    double _capacitance;
-
 public:
-    Capacitor(string pin1, string pin2, double capacitance)
+    Capacitor(string node_p, string node_n, double property)
     {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _capacitance = capacitance;
+        assert(node_p != node_n);
+        _type = "C";
+        _node_p = node_p;
+        _node_n = node_n;
+        _property = property;
     }
 
-    double getCapacitance()
+    complex<double> get_conductance(double f)
     {
-        return _capacitance;
-    }
-
-    double cache_current(double t)
-    {
-        //to store the current at time t
-    }
-
-    double get_voltage(double t)
-    {
-        //require an extra parameter: timestep
-        //require a library for numerical integration
-        //return integrate(cache_current(t - timestep)/C) with respect to t
-    }
-
-    complex<double> getValue(double f, double t)
-    {
-        return complex<double>(0.0, 2.0 * M_PI * f * _capacitance);
+        return complex<double>(0.0, 2.0 * M_PI * f * _property);
     }
 };
 
 class Resistor : public Component
 {
-private:
-    double _resistance;
-
 public:
-    Resistor(string pin1, string pin2, double resistance)
+    Resistor(string node_p, string node_n, double property)
     {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _resistance = resistance;
+        assert(node_p != node_n);
+        _type = "R";
+        _node_p = node_p;
+        _node_n = node_n;
+        _property = property;
     }
 
-    complex<double> getValue(double f, double t)
+    complex<double> get_conductance(double f)
     {
-        return complex<double>((1.0 / _resistance), 0.0);
+        return complex<double>((1.0 / _property), 0.0);
     }
 };
 
-class DC_voltage : public Component
-{
-private:
-    double _voltage;
-    double _frequency = 0;
-    string type = "power_source";
-
-public:
-    DC_voltage(string pin1, string pin2, double voltage)
-    {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _voltage = voltage;
-    }
-    double getFrequency()
-    {
-        return _frequency;
-    }
-    double getVoltage(double t)
-    {
-        return _voltage;
-    }
-    complex<double> getValue(double f, double t)
-    {
-        return complex<double>(0.0, 0.0);
-    }
-
-    string get_type()
-    {
-        return type;
-    }
-};
-
-class SIN_voltage : public Component
-{
-private:
-    double _amplitude;
-    double _frequency;
-    string type = "power_source";
-
-public:
-    SIN_voltage(string pin1, string pin2, double amplitude, double frequency)
-    {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _amplitude = amplitude;
-        _frequency = frequency;
-    }
-    double getFrequency()
-    {
-        return _frequency;
-    }
-    double getVoltage(double f, double t)
-    {
-        double result;
-        result = _amplitude * sin(2.0 * M_PI * f * t);
-        return result;
-    }
-    complex<double> getValue(double f, double t)
-    {
-        return complex<double>(0.0, 0.0);
-    }
-
-    string get_type()
-    {
-        return type;
-    }
-};
-
-class current_source : public Component
-{
-private:
-    double _current;
-    //string type = "power_source";
-public:
-    current_source(string pin1, string pin2, double current)
-    {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _current = current;
-    }
-    double getCurrent(double t)
-    {
-        return _current;
-    }
-    complex<double> getValue(double f, double t)
-    {
-        return complex<double>(0.0, 0.0);
-    }
-};
-
-// voltage source
 class Voltage : public Component
 {
-private:
-    double _voltage;
-    string type = "power_source";
-
 public:
-    string get_type()
+    Voltage(string node_p, string node_n, double amplitude)
     {
-        return type;
+        assert(node_p != node_n);
+        _type = "V";
+        _node_p = node_p;
+        _node_n = node_n;
+        _amplitude = amplitude;
+        if (contain_node("0"))
+        {
+            _is_grounded = true;
+        }
     }
 
-    Voltage(string pin1, string pin2, double voltage)
+    double get_voltage(double t)
     {
-        assert(pin1 != pin2);
-        if (pin1 < pin2)
-        {
-            _pin1 = pin1;
-            _pin2 = pin2;
-        }
-        else
-        {
-            _pin1 = pin2;
-            _pin2 = pin1;
-        }
-        _voltage = voltage;
-        // use "function" to initialise voltage member
-    };
-    ~Voltage(){};
-    complex<double> getValue(double f, double t)
+        return _amplitude;
+    }
+};
+
+class SINE_Voltage : public Component
+{
+public:
+    SINE_Voltage(string node_p, string node_n, double bias, double amplitude, double frequency)
     {
-        return complex<double>(_voltage);
-    };
+        assert(node_p != node_n);
+        _type = "V";
+        _node_p = node_p;
+        _node_n = node_n;
+        _bias = bias;
+        _amplitude = amplitude;
+        _frequency = frequency;
+        if (contain_node("0"))
+        {
+            _is_grounded = true;
+        }
+    }
+
+    double get_voltage(double t)
+    {
+        double result = _bias + _amplitude * sin(_frequency * t);
+        return result;
+    }
+};
+
+class Current : public Component
+{
+protected:
+public:
+    Current(string node_p, string node_n, double amplitude)
+    {
+        assert(node_p != node_n);
+        _type = "I";
+        _node_p = node_p;
+        _node_n = node_n;
+        _amplitude = amplitude;
+    }
+
+    double get_current(double t)
+    {
+        return _amplitude;
+    }
 };
 
 #endif

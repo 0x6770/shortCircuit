@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <complex>
 #include <vector>
 #include <cassert>
@@ -69,7 +70,7 @@ int main()
     cout << "==============================" << endl;
 
     vector<double> instants = generate_instants(".tran 0 10ms 0 1us ");
-    cout << "From: " << instants[0] << "\t\tto: " << instants[instants.size() - 1] << "\twith step: " << instants[1] << "\tand size: " << instants.size() << endl;
+    cout << "From: " << instants[0] << setw(15) << "to: " << instants[instants.size() - 1] << setw(15) << "with step: " << instants[1] << setw(15) << "and size: " << instants.size() << endl;
     // for (auto it = instant.begin(); it != instant.end(); it++)
     // {
     //     cout << *it << endl;
@@ -83,7 +84,9 @@ int main()
 
     vector<Component *> components;
     vector<string>
-        component_strings = {"R1 N001 N003 1k",
+        component_strings = {"V1 N003 0 2",
+                             "V1 N003 0 SINE(2 1 1000)",
+                             "R1 N001 N003 1k",
                              "C1 N001 0 1μ ",
                              "L1 N002 N001 1m",
                              "R2 N002 N001 1Meg "};
@@ -94,9 +97,9 @@ int main()
     cout << components.size() << " components in total" << endl;
     double f = 1000;
     double t = 0.001;
+    cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
     for (auto it = components.begin(); it != components.end(); it++)
     {
-        // cout << "conductance:\t" << (*it)->getPin(1) << endl;
-        cout << "conductance:\t" << (*it)->getValue(f, t) << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t) << setw(18) << (*it)->get_voltage(t) << setw(18) << (*it)->check_grounded() << endl;
     }
 };

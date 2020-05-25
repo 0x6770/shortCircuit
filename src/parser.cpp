@@ -1,5 +1,6 @@
 #include "parser.hpp"
 
+//* tested and Done
 double parse_number(string input)
 {
     // 1p, 1n, 1μ, 1m, 1, 1k, 1Meg
@@ -57,38 +58,70 @@ double parse_number(string input)
     return result;
 };
 
+//* tested for R,C,L
+//! TODO V and I
 Component *parse_component(string input)
 {
     stringstream ss;
     ss << input;
-    string name, pin1, pin2, resistance, capacitance, inductance, voltage_type;
-    double real_resistance, real_capacitance, real_inductance;
+    string name, node_p, node_n, property, voltage_type, bias, amplitude, frequency, buffer1, buffer2, buffer3;
+    double real_property, real_bias, real_amplitude, real_frequency;
     if (input[0] == 'R')
     {
-        ss >> name >> pin1 >> pin2 >> resistance;
-        real_resistance = parse_number(resistance);
-        // cout << "type: " << input[0] << "\tname: " << name << "\tpin1: " << pin1 << "\tpin2: " << pin2 << "\tresistance: " << real_resistance << endl;
-        Component *result = new Resistor(pin1, pin2, real_resistance);
+        ss >> name >> node_p >> node_n >> property;
+        real_property = parse_number(property);
+        // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tresistance: " << real_resistance << endl;
+        Component *result = new Resistor(node_p, node_n, real_property);
         return result;
     }
     else if (input[0] == 'L')
     {
-        ss >> name >> pin1 >> pin2 >> inductance;
-        real_inductance = parse_number(inductance);
-        // cout << "type: " << input[0] << "\tname: " << name << "\tpin1: " << pin1 << "\tpin2: " << pin2 << "\tinductance: " << real_inductance << endl;
-        Component *result = new Inductor(pin1, pin2, real_inductance);
+        ss >> name >> node_p >> node_n >> property;
+        real_property = parse_number(property);
+        // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tinductance: " << real_inductance << endl;
+        Component *result = new Inductor(node_p, node_n, real_property);
         return result;
     }
     else if (input[0] == 'C')
     {
-        ss >> name >> pin1 >> pin2 >> capacitance;
-        real_capacitance = parse_number(capacitance);
-        // cout << "type: " << input[0] << "\tname: " << name << "\tpin1: " << pin1 << "\tpin2: " << pin2 << "\tcapacitance: " << real_capacitance << endl;
-        Component *result = new Capacitor(pin1, pin2, real_capacitance);
+        ss >> name >> node_p >> node_n >> property;
+        real_property = parse_number(property);
+        // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
+        Component *result = new Capacitor(node_p, node_n, real_property);
+        return result;
+    }
+    else if (input[0] == 'V')
+    {
+        if (ss >> name >> node_p >> node_n >> buffer1 >> buffer2 >> buffer3)
+        {
+            // cout << "SINE " << name << " " << node_p << " " << node_n << " " << buffer1 << " " << buffer2 << " " << buffer3 << endl;
+            // cout << "buffer1.substr(5)" << buffer1.substr(5) << endl;
+            real_bias = parse_number(buffer1.substr(5));
+            real_amplitude = parse_number(buffer2);
+            // cout << "buffer3.substr(0, (buffer3.size() - 1))" << buffer3.substr(0, (buffer3.size() - 1)) << endl;
+            real_frequency = parse_number(buffer3.substr(0, (buffer3.size() - 1)));
+            Component *result = new SINE_Voltage(node_p, node_n, real_bias, real_amplitude, real_frequency);
+            return result;
+        }
+        else
+        {
+            // cout << "DC " << name << " " << node_p << " " << node_n << " " << buffer1 << " " << buffer2 << " " << buffer3 << endl;
+            real_amplitude = parse_number(buffer1);
+            Component *result = new Voltage(node_p, node_n, real_amplitude);
+            return result;
+        }
+    }
+    else if (input[0] == 'I')
+    {
+        ss >> name >> node_p >> node_n >> amplitude;
+        real_amplitude = parse_number(amplitude);
+        // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
+        Component *result = new Current(node_p, node_n, real_amplitude);
         return result;
     }
 };
 
+//* tested and Done
 vector<double> generate_instants(string directive)
 {
     vector<double> result;
@@ -113,6 +146,7 @@ vector<double> generate_instants(string directive)
     return result;
 };
 
+//* tested and Done
 bool is_comment(string input)
 {
     if (input[0] == '*')
@@ -122,6 +156,7 @@ bool is_comment(string input)
     return false;
 };
 
+//* tested and Done
 bool is_directive(string input)
 {
     if (input.substr(0, 5) == ".tran")
@@ -131,6 +166,7 @@ bool is_directive(string input)
     return false;
 };
 
+//* tested and Done
 bool is_end(string input)
 {
     if (input.substr(0, 4) == ".end")
@@ -140,6 +176,7 @@ bool is_end(string input)
     return false;
 };
 
+//* tested and Done
 bool is_component(string input)
 {
     if (is_end(input) | is_directive(input) | is_comment(input))

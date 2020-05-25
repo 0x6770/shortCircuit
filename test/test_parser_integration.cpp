@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <complex>
 #include <vector>
 #include <cassert>
@@ -40,9 +41,10 @@ int main()
     cout << circuit.size() << " components in total" << endl;
     double f = 1000;
     double t = 0.001;
+    cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
     for (auto it = circuit.begin(); it != circuit.end(); it++)
     {
         // cout << "conductance:\t" << (*it)->getPin(1) << endl;
-        cout << "conductance:\t" << (*it)->getValue(f, t) << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t) << setw(18) << (*it)->get_voltage(t) << setw(18) << (*it)->check_grounded() << endl;
     }
 }
