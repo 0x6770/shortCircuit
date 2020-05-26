@@ -1,10 +1,6 @@
-//
-// Created by 44736 on 25/05/2020.
-//
-
 #include "Component.hpp"
 
-string Component::get_node(int n) {
+int Component::get_node(int n) {
     if(n == 1)
         return _n1;
     if(n == 2)
@@ -37,3 +33,13 @@ bool Component::is_passive() {
     return false;
 }
 
+int Component::convert_node_to_int(string a){
+    if(a == "0"){
+        return stoi(a);
+    }
+    else{
+        string temp;
+        temp = a.substr(1,3);
+        return stoi(temp);
+    }
+}

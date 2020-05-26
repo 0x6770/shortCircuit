@@ -12,23 +12,14 @@ class node {
 private:
     int _number;
     //default value for current and voltage are zero
-    // if want to use the library for Ax = b, assuming these types must be consistent.
+    // if want to use the library for Ax = b, these types must be consistent.
     complex<double> _current = (0.0,0.0) ;
     complex<double> _voltage = (0.0,0.0) ;
     vector<Component*> _branches;
 public:
     //empty node constructors
-    node(string name){
-        if(name == "0"){
-            _number = stoi(name);
-        }
-        else {
-            string temp;
-            for(int i = 1; i < name.size();i++){
-                temp.push_back(name[i]);
-            }
-            _number = stoi(temp);
-        }
+    node(int id){
+        _number = id;
     };
 
     void get_current();

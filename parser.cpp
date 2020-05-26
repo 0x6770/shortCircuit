@@ -2,7 +2,7 @@
 
 double parse_number(string input){
     //assert(!isalpha(input[0])); //question
-    assert(!input.empty());
+    //assert(!input.empty());
 
     double result = 0.0;
     string multiplier = "";
@@ -88,8 +88,7 @@ bool is_end(string input){
 }
 
 bool is_component(string input){
-    if(is_end(input) or is_directive(input) or is_comment(input)){
+    if(input[0] == '*' or input[0] == '.')
         return false;
-    }
     return true;
 }
