@@ -46,6 +46,8 @@ public:
 
     int convert_node_to_int(string a);
 
+    bool is_grounded();
+
 };
 
 

@@ -16,7 +16,7 @@ string Component::get_identifier() {
 }
 
 bool Component::is_current() {
-    if(_identifier[0] = 'I')
+    if(_identifier[0] == 'I')
         return true;
     return false;
 }
@@ -42,4 +42,11 @@ int Component::convert_node_to_int(string a){
         temp = a.substr(1,3);
         return stoi(temp);
     }
+}
+
+bool Component::is_grounded(){
+    if(_n1 == 0 or _n2 == 0){
+        return true;
+    }
+    return false;
 }

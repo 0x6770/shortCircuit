@@ -16,15 +16,21 @@ private:
     complex<double> _current = (0.0,0.0) ;
     complex<double> _voltage = (0.0,0.0) ;
     vector<Component*> _branches;
+    bool connected_current = false;
+    bool connected_voltage = false;
 public:
     //empty node constructors
     node(int id){
         _number = id;
     };
 
-    void get_current();
+    bool is_connect_current();
 
-    void get_voltage();
+    bool is_connect_voltage();
+
+    complex<double> get_current();
+
+    complex<double> get_voltage();
 
     int get_number();
 
@@ -33,6 +39,14 @@ public:
     vector<Component*> get_branches();
 
     bool operator==(node * a);
+
+    bool is_super_node();
+
+    bool is_connected_current();
+
+    bool is_connected_voltage();
+
+    void set_current();
 };
 
 

@@ -20,6 +20,10 @@ private:
     vector<node*> _node_no_ground; // useful when constructing the vector b in the equation Ax = b;
     node* GND = new node(0);
     map<pair<int,int>,complex<double>> conductance_matrix; // should not vary with time;
+    map<int,complex<double>> column_matrix;  // b in Ax = b; should be empty initially;
+    map<pair<int,int>,double> super_node_equation; // to store super node equations and the node with know value;
+    map<int,int> forward_nodes;
+    map<int,int> backward_nodes; // only matters for super node
 public:
     //the constructor for the circuit
     //two functions
@@ -28,12 +32,18 @@ public:
     circuit(double f,vector<Component*> components){
         _frequency = f;
         vector<int> nodes_int;
-        int temp;
+        int temp1,temp2;
         for(int i = 0; i < components.size();i++){
-            temp = components[i]->get_node(1);
-            nodes_int.push_back(temp);
-            temp = components[i]->get_node(2);
-            nodes_int.push_back(temp);
+            temp1 = components[i]->get_node(1);
+            nodes_int.push_back(temp1);
+            temp2 = components[i]->get_node(2);
+            nodes_int.push_back(temp2);
+            if(components[i]->is_voltage()){
+                pair<int,int> coffe = make_pair(temp1,temp2);
+                super_node_equation[coffe] = components[i]->get_value();
+                forward_nodes[temp1] = temp2;
+                backward_nodes[temp2] = temp1;
+            }
         }
         //remove duplicates strings in the nodes_string
         sort(nodes_int.begin(),nodes_int.end());
@@ -49,6 +59,7 @@ public:
                         create_node->add_branches(components[k]);
                     }
                 }
+                create_node->set_current();
                 _node_no_ground.push_back(create_node);
         }
     }
@@ -72,6 +83,17 @@ public:
 
     // one of the key advantage of using the int, is that the matrix values will be stored in order
     map<pair<int,int>,complex<double>> get_conductance_matrix();
+
+    void pure_node_matrix_row(node* a);
+
+    void equation_matrix(node* a);
+
+    void direct_source_matrix(node* a);
+
+    node* get_node_from_int(int a);
+
+    map<int,complex<double>> get_column_matrix();
+
 };
 
 
