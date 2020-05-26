@@ -7,6 +7,8 @@
 
 vector<string> remove_duplicates(vector<string> &nums);
 
-vector<string> find_nodes(vector<Component *> circuit);
+vector<string> find_nodes(const vector<Component *> &circuit);
+
+vector<string> remove_ground(const vector<string> &circuit);
 
 #endif

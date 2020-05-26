@@ -14,7 +14,7 @@ vector<string> remove_duplicates(vector<string> &nums)
     return nums;
 }
 
-vector<string> find_nodes(vector<Component *> circuit)
+vector<string> find_nodes(const vector<Component *> &circuit)
 {
     vector<string> nodes;
     for (auto it = circuit.begin(); it != circuit.end(); it++)
@@ -23,8 +23,22 @@ vector<string> find_nodes(vector<Component *> circuit)
         nodes.push_back((*it)->get_node("n"));
     }
     sort(nodes.begin(), nodes.end());
+    auto it = find(nodes.begin(), nodes.end(), "0");
+    if (it == nodes.end())
+    {
+        cerr << endl;
+        cerr << "🚧 ERROR: circuit is not grounded. " << endl;
+        cerr << endl;
+    }
 
     return remove_duplicates(nodes);
+}
+
+vector<string> remove_ground(const vector<string> &circuit)
+{
+    vector<string> tmp_circuit = circuit;
+    tmp_circuit.erase(tmp_circuit.begin());
+    return tmp_circuit;
 }
 
 int demension(vector<string> nodes)

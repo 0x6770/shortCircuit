@@ -47,6 +47,15 @@ bool is_comment(string input);
 bool is_directive(string input);
 
 /**
+ * @brief determine whether a given directive is .tran or not
+ * 
+ * @param input 
+ * @return true 
+ * @return false 
+ */
+bool is_tran(string directive);
+
+/**
  * @brief determine whether a given string is end or not
  * 
  * @param input the given string

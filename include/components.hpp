@@ -14,6 +14,7 @@ class Component
 {
 protected:
     string _type;
+    string _name;
     string _node_p;
     string _node_n;
     double _property = 0;
@@ -24,12 +25,12 @@ protected:
 
 public:
     Component() {}
-    string get_node(string x)
+    const string get_node(string x)
     {
         string node = x == "p" ? _node_p : _node_n;
         return node;
     }
-    bool contain_node(string node)
+    const bool contain_node(string node)
     {
         if (node == _node_p || node == _node_n)
         {
@@ -37,16 +38,20 @@ public:
         }
         return false;
     }
-    bool check_grounded()
+    const bool check_grounded()
     {
         return _is_grounded;
     }
-    virtual double get_voltage(double t)
+    const string get_name()
+    {
+        return _name;
+    }
+    virtual double get_voltage(double t, string node)
     {
         double result = 0.0;
         return result;
     }
-    virtual double get_current(double t)
+    virtual double get_current(double t, string node)
     {
         double result = 0.0;
         return result;
@@ -66,10 +71,11 @@ public:
 class Inductor : public Component
 {
 public:
-    Inductor(string node_p, string node_n, double property)
+    Inductor(string name, string node_p, string node_n, double property)
     {
         assert(node_p != node_n);
         _type = "L";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _property = property;
@@ -84,10 +90,11 @@ public:
 class Capacitor : public Component
 {
 public:
-    Capacitor(string node_p, string node_n, double property)
+    Capacitor(string name, string node_p, string node_n, double property)
     {
         assert(node_p != node_n);
         _type = "C";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _property = property;
@@ -102,10 +109,11 @@ public:
 class Resistor : public Component
 {
 public:
-    Resistor(string node_p, string node_n, double property)
+    Resistor(string name, string node_p, string node_n, double property)
     {
         assert(node_p != node_n);
         _type = "R";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _property = property;
@@ -120,10 +128,11 @@ public:
 class Voltage : public Component
 {
 public:
-    Voltage(string node_p, string node_n, double amplitude)
+    Voltage(string name, string node_p, string node_n, double amplitude)
     {
         assert(node_p != node_n);
         _type = "V";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _amplitude = amplitude;
@@ -133,19 +142,34 @@ public:
         }
     }
 
-    double get_voltage(double t)
+    double get_voltage(double t, string node)
     {
-        return _amplitude;
+        if (node == _node_p)
+        {
+            return _amplitude;
+        }
+        else if (node == _node_n)
+        {
+            return -1.0 * _amplitude;
+        }
+        else
+        {
+            cerr << endl;
+            cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
+            cerr << endl;
+            exit(1);
+        }
     }
 };
 
 class SINE_Voltage : public Component
 {
 public:
-    SINE_Voltage(string node_p, string node_n, double bias, double amplitude, double frequency)
+    SINE_Voltage(string name, string node_p, string node_n, double bias, double amplitude, double frequency)
     {
         assert(node_p != node_n);
         _type = "V";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _bias = bias;
@@ -157,9 +181,25 @@ public:
         }
     }
 
-    double get_voltage(double t)
+    double get_voltage(double t, string node)
     {
+
         double result = _bias + _amplitude * sin(_frequency * t);
+        if (node == _node_p)
+        {
+            return result;
+        }
+        else if (node == _node_n)
+        {
+            return -1.0 * result;
+        }
+        else
+        {
+            cerr << endl;
+            cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
+            cerr << endl;
+            exit(1);
+        }
         return result;
     }
 };
@@ -168,18 +208,33 @@ class Current : public Component
 {
 protected:
 public:
-    Current(string node_p, string node_n, double amplitude)
+    Current(string name, string node_p, string node_n, double amplitude)
     {
         assert(node_p != node_n);
         _type = "I";
+        _name = name;
         _node_p = node_p;
         _node_n = node_n;
         _amplitude = amplitude;
     }
 
-    double get_current(double t)
+    double get_current(double t, string node)
     {
-        return _amplitude;
+        if (node == _node_p)
+        {
+            return _amplitude;
+        }
+        else if (node == _node_n)
+        {
+            return -1.0 * _amplitude;
+        }
+        else
+        {
+            cerr << endl;
+            cerr << "🚧 ERROR: invalid node, " << node << " for " << _name << " not exit in " << _node_p << " and " << _node_n << endl;
+            cerr << endl;
+            exit(1);
+        }
     }
 };
 
