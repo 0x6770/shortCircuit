@@ -13,8 +13,8 @@ private:
     int _number;
     //default value for current and voltage are zero
     // if want to use the library for Ax = b, these types must be consistent.
-    complex<double> _current = (0.0,0.0) ;
-    complex<double> _voltage = (0.0,0.0) ;
+    double _current = 0.0;
+    double _voltage = 0.0 ;
     vector<Component*> _branches;
     bool connected_current = false;
     bool connected_voltage = false;
@@ -28,9 +28,9 @@ public:
 
     bool is_connect_voltage();
 
-    complex<double> get_current();
+    double get_current();
 
-    complex<double> get_voltage();
+    double get_voltage();
 
     int get_number();
 

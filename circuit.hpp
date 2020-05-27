@@ -10,6 +10,9 @@
 #include <utility>
 #include <map>
 #include <cmath>
+#include <C:\Users\44736\Desktop\shortCircuit\Eigen\Core>
+#include <C:\Users\44736\Desktop\shortCircuit\Eigen\LU>
+using namespace Eigen;
 using namespace std;
 
 class circuit {
@@ -19,11 +22,16 @@ private:
     vector<Component*> _components; // useful when calculating the conductance due to one single component;
     vector<node*> _node_no_ground; // useful when constructing the vector b in the equation Ax = b;
     node* GND = new node(0);
-    map<pair<int,int>,complex<double>> conductance_matrix; // should not vary with time;
-    map<int,complex<double>> column_matrix;  // b in Ax = b; should be empty initially;
+
     map<pair<int,int>,double> super_node_equation; // to store super node equations and the node with know value;
     map<int,int> forward_nodes;
     map<int,int> backward_nodes; // only matters for super node
+
+    int dimension;
+
+public:
+    Matrix<double,Eigen::Dynamic,Eigen::Dynamic>  A;// should not vary with time;
+    Matrix<double,Eigen::Dynamic,Eigen::Dynamic>  b;  // b in Ax = b; should be empty initially;
 public:
     //the constructor for the circuit
     //two functions
@@ -62,10 +70,13 @@ public:
                 create_node->set_current();
                 _node_no_ground.push_back(create_node);
         }
+        dimension = _node_no_ground.size();
+        A.resize(dimension,dimension);
+        b.resize(dimension,1);
     }
 
     //helper function for the build_conductance_matrix, should not used for itself;
-    complex<double> single_conductance(Component* a);
+    double single_conductance(Component* a);
 
     //return the nodes vector without the ground node;
     vector<node*> get_node_no_ground();
@@ -74,15 +85,15 @@ public:
     node* get_GND();
 
 
-    // to fill map<pair<node*,node*>,complex<double> conductance_matrix;
+    // to fill map<pair<node*,node*>,double conductance_matrix;
     //TODO:: special treatment for the the circuit containing the super node.
     void build_conductance_matrix();
 
     //helper function for the build_conductance_matrix, should not used for itself;
-    complex<double> conductance_between_nodes(node *a,node *b);
+    double conductance_between_nodes(node *a,node *b);
 
     // one of the key advantage of using the int, is that the matrix values will be stored in order
-    map<pair<int,int>,complex<double>> get_conductance_matrix();
+    Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_A_matrix();
 
     void pure_node_matrix_row(node* a);
 
@@ -92,7 +103,8 @@ public:
 
     node* get_node_from_int(int a);
 
-    map<int,complex<double>> get_column_matrix();
+    Matrix<double,Eigen::Dynamic,Eigen::Dynamic> get_b_matrix();
+
 
 };
 

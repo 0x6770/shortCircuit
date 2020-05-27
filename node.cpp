@@ -1,11 +1,11 @@
 #include "node.hpp"
 #include "Component.hpp"
 
-complex<double> node::get_voltage() {
+double node::get_voltage() {
     return _voltage;
 }
 
-complex<double> node::get_current() {
+double node::get_current() {
     return _current;
 }
 
@@ -67,10 +67,10 @@ void node::set_current(){
         for(int i = 0; i<_branches.size();i++){
             if(_branches[i]->is_current()){
                 if(_branches[i]->get_node(1) == _number){
-                    _current = _current + (complex<double>)_branches[i]->get_value();
+                    _current = _current + _branches[i]->get_value();
                 }
                 else if(_branches[i]->get_node(2) == _number){
-                    _current = _current - (complex<double>)_branches[i]->get_value();
+                    _current = _current - _branches[i]->get_value();
                 }
             }
         }
