@@ -66,10 +66,10 @@ void node::set_current(){
     if(connected_current && !(connected_voltage)){
         for(int i = 0; i<_branches.size();i++){
             if(_branches[i]->is_current()){
-                if(_branches[i]->get_node(1) == _number){
+                if(_branches[i]->get_node(2) == _number){
                     _current = _current + _branches[i]->get_value();
                 }
-                else if(_branches[i]->get_node(2) == _number){
+                else if(_branches[i]->get_node(1) == _number){
                     _current = _current - _branches[i]->get_value();
                 }
             }
@@ -79,10 +79,3 @@ void node::set_current(){
 
 
 
-bool node::is_connect_current(){
-
-}
-
-bool node::is_connect_voltage(){
-
-}

@@ -24,9 +24,6 @@ public:
         _number = id;
     };
 
-    bool is_connect_current();
-
-    bool is_connect_voltage();
 
     double get_current();
 
@@ -47,6 +44,8 @@ public:
     bool is_connected_voltage();
 
     void set_current();
+
+    bool is_know_voltage();
 };
 
 

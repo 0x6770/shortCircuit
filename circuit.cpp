@@ -61,7 +61,6 @@ void circuit::equation_matrix(node* a){
         node * other = get_node_from_int(id);
         for(int i = 0; i < _node_no_ground.size();i++){
             int col = _node_no_ground[i]->get_number();
-            //pair<int,int> temp = make_pair(row,col);
             if(col == id ){
                 A(row-1,col-1) = 0.0;
             }
@@ -80,7 +79,6 @@ void circuit::equation_matrix(node* a){
         int id = backward_nodes[row];
         for(int i = 0; i <_node_no_ground.size(); i++){
             int col = _node_no_ground[i]->get_number();
-            //pair<int,int> temp = make_pair(row,col);
             if(col == row){
                 A(row-1,col-1) = -1.0;
             }
@@ -101,7 +99,6 @@ void circuit::direct_source_matrix(node* a){
     int col;
     for(int i = 0; i < _node_no_ground.size();i++){
         col = _node_no_ground[i]->get_number();
-        //pair<int,int> temp = make_pair(row,col);
         if(row == col){
             A(row-1,col-1) = 1.0;
         }
@@ -109,28 +106,30 @@ void circuit::direct_source_matrix(node* a){
             A(row-1,col-1) = 0.0;
         }
     }
-    auto it_positive = forward_nodes.find(row);
-    if(it_positive != forward_nodes.end()){
-        pair<int,int> value = make_pair(row,0);
-        b(row-1,0) = super_node_equation[value];
-    }
-    else{
-        pair<int,int> value = make_pair(0,row);
-        b(row-1,0) = -1.0 * super_node_equation[value];
+    auto it_positive = known_voltage.find(row);
+    if(it_positive != known_voltage.end()){
+        double id_know = known_voltage[row];
+        b(row-1,0) = id_know;
     }
 }
 
 
 void circuit::build_conductance_matrix(){
     for(int i =0; i < _node_no_ground.size();i++){
+        // the simplest one
         if(!(_node_no_ground[i]->is_connected_voltage())) {
             pure_node_matrix_row(_node_no_ground[i]);
         }
-        else if(_node_no_ground[i]->is_super_node()){
-            equation_matrix(_node_no_ground[i]);
-        }
+        // nodes involving supernodes and know value
         else{
-            direct_source_matrix(_node_no_ground[i]);
+            int id = _node_no_ground[i]->get_number();
+            auto it = known_voltage.find(id);
+            if(it != known_voltage.end()){
+                direct_source_matrix(_node_no_ground[i]);
+            }
+            else{
+                equation_matrix(_node_no_ground[i]);
+            }
         }
     }
 }
@@ -144,5 +143,33 @@ node* circuit::get_node_from_int(int a){
     for(int i = 0; i < _node_no_ground.size(); i++){
         if(_node_no_ground[i]->get_number() == a)
             return _node_no_ground[i];
+    }
+}
+
+
+void circuit::simplify(){
+    map<pair<int,int>,double> temp_super = super_node_equation;
+    for(auto it = temp_super.begin(); it != temp_super.end();it++){
+        pair<int,int> temp  = it->first;
+        auto find_1 = known_voltage.find(temp.first);
+        auto find_2 = known_voltage.find(temp.second);
+        if(find_1 != known_voltage.end()){
+            int known = temp.second;
+            known_voltage[known] = known_voltage[temp.first] - it->second;
+            super_node_equation.erase(temp);
+        }
+        if(find_2 != known_voltage.end()){
+            int known = temp.first;
+            known_voltage[known] = known_voltage[temp.second] + it->second;
+            super_node_equation.erase(temp);
+        }
+    }
+    // set out the forward and backward euqation;
+    if(super_node_equation.size() != 0){
+        for(auto v: super_node_equation){
+            pair<int,int> set_map = v.first;
+            forward_nodes[set_map.first] = set_map.second;
+            backward_nodes[set_map.second] = set_map.first;
+        }
     }
 }
