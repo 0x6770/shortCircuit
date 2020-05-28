@@ -44,11 +44,8 @@ void circuit::pure_node_matrix_row(node* a) {
     for(int k = 0; k < _node_no_ground.size();k++){
         int col =  _node_no_ground[k]->get_number();
         A(row-1,col-1) = conductance_between_nodes(a,_node_no_ground[k]);
-       // pair<int,int> temp = make_pair(row,col);
-        //conductance_matrix[temp] = conductance_between_nodes(a,_node_no_ground[k]);
     }
     b(row-1,0) = a->get_current();
-    //column_matrix[row] = a->get_current();
 }
 
 void circuit::equation_matrix(node* a){
@@ -134,9 +131,8 @@ void circuit::build_conductance_matrix(){
     }
 }
 
-node* circuit::get_GND(){
-    return GND;
-}
+
+void build_current_matrix();
 
 
 node* circuit::get_node_from_int(int a){
