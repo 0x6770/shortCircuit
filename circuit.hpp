@@ -41,7 +41,6 @@ public:
     //1. create the new instances fo nodes(without ground node) from strings that has been found from the inputs
     //2. stored these nodes in the circuit
     circuit(double f,vector<Component*> components) {
-        _frequency = f;
         vector<int> nodes_int;
         int temp1, temp2;
         for (int i = 0; i < components.size(); i++) {
@@ -55,7 +54,7 @@ public:
                     super_node_equation[coffe] = components[i]->get_value();
                 } else {
                     if (temp1 == 0) {
-                        known_voltage[temp2] = components[i]->get_value();
+                        known_voltage[temp2] = -1.0*components[i]->get_value();
                     } else if (temp2 == 0) {
                         known_voltage[temp1] = components[i]->get_value();
                     }
