@@ -31,7 +31,7 @@ int main(){
     transient* simulation_setting = nullptr;
     double time  = 0.0; // starting time is always zero;
     // read the circuit with out time step parameters yet
-    while(getline(cin,input)){
+    /*while(getline(cin,input)){
         if(is_component(input)){
             components_vector.push_back(parse_component(input));
         }
@@ -41,9 +41,14 @@ int main(){
         else if(is_end(input)){
             break;
         }
-    }
+    }*/
     double f = 0.0;
-    circuit *total = new circuit(f,components_vector);
+    string sin_wave = "V1 N002 N001 SINE(3 2 1k)";
+    Component* V = parse_component(sin_wave);
+    //V->set_time(time);
+    cout << V->get_value() << endl;
+
+    /*circuit *total = new circuit(f,components_vector);
     total->build_conductance_matrix();
     Matrix<double,Eigen::Dynamic,Eigen::Dynamic> A;
     Matrix<double,Eigen::Dynamic,Eigen::Dynamic> b;
@@ -57,10 +62,11 @@ int main(){
     //cout << x << endl;
 
 
+
     int total_nodes = x.rows();
     //cout << "time" << '\t';
     for(int i = 1; i <= total_nodes; i++){
         //cout << print_node_name(i) << '\t';
     }
-
+*/
 }

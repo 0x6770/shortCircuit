@@ -58,3 +58,12 @@ double SIN::get_real_voltage(double time){
     _value = dc_offset + ac_amplitude * sin(2 * M_PI * frequency * time);
     return _value;
 }
+
+void SIN::set_time(double time) {
+    _time = time;
+}
+
+double SIN::get_value(){
+    return get_real_voltage(_time);
+}
+

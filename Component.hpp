@@ -34,7 +34,7 @@ public:
     int get_node(int n);
 
     //return the value of this component;
-    double get_value();
+    virtual double get_value();
 
     //return the identifier of this component;
     string get_identifier();
@@ -53,6 +53,7 @@ public:
 
     bool is_grounded();
 
+    virtual void set_time(double time){};
 };
 
 
@@ -63,6 +64,7 @@ private:
     double frequency;
 
 public:
+    double _time = 0.0;
     // set initial value
     SIN(string name,string n1,string n2,double DC, double amplitude, double set_frequency ){
         _identifier = name;
@@ -74,6 +76,10 @@ public:
         frequency = set_frequency;
     }
     double get_real_voltage(double time);
+
+    void set_time(double time);
+
+    double get_value();
 };
 
 
