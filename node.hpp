@@ -1,61 +1,57 @@
-#ifndef node_hpp
-#define node_hpp
+#ifndef TRANSIENT_SIMULATOR_NODE_HPP
+#define TRANSIENT_SIMULATOR_NODE_HPP
 
 #include <iostream>
 #include <vector>
-#include <string>
 #include <complex>
-
+#include <string>
+#include "Component.hpp"
 using namespace std;
 
-class Component;
-
-class Circuit;
-
-class Node{
+class node {
 private:
-    double voltage;
-    vector<Component*> components;
-    bool isGround = false;
-    string name;
-
+    int _number;
+    //default value for current and voltage are zero
+    // if want to use the library for Ax = b, these types must be consistent.
+    complex<double> _current = complex<double>(0.0,0.0) ;
+    complex<double> _voltage = complex<double>(0.0,0.0) ;
+    vector<Component*> _branches;
+    bool connected_current = false;
+    bool connected_voltage = false;
 public:
-    Node(){}; //(1)
+    node(){};
 
-    Node(double vol, vector<Component*> temp, bool ground); //not frequently used (2)
+    ~node(){};
 
-    Node(double vol, bool ground); //frequently used (3)
+    //empty node constructors
+    node(int id){
+        _number = id;
+    };
 
-    Node(vector<Component*> temp, bool ground); //frequently used (4)
+    bool is_connect_current();
 
-    bool check_equal(Node *a, Node *b);
+    bool is_connect_voltage();
 
+    complex<double> get_current();
 
-    ~Node(){};
+    complex<double> get_voltage();
 
-    void set_node(double vol, vector<Component*> temp,bool ground); //match with (1)
+    int get_number();
 
-    void set_node(vector<Component*> temp); //match with (3)
+    void add_branches(Component* branch);
 
-    void set_voltage(double vol); //match with (4)
+    vector<Component*> get_branches();
 
-    void set_name(string temp); //node name is set when component is read
+    bool operator==(node * a);
 
-    void store_comp(Component* t); //store component in node
+    bool is_super_node();
 
-    double get_voltage(); //checked
-    bool is_ground(); //checked
-    int get_num_of_components(); //checked
-    string get_name(); //checked
-    vector<Component*> get_components();
-    void set_is_ground();
+    bool is_connected_current();
 
-    bool operator==(Node *a);
+    bool is_connected_voltage();
 
+    void set_current();
 };
 
 
-
-
-
-#endif
+#endif //TRANSIENT_SIMULATOR_NODE_HPP

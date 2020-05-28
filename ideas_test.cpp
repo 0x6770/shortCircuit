@@ -1,8 +1,9 @@
 #include <iostream>
 #include <string>
-#include <vector>
 using namespace std;
 
 int main(){
-
+    string a = "001";
+    int b = stoi(a);
+    cout << b << endl;
 }

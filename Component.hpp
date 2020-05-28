@@ -14,21 +14,13 @@ private:
     double _value;
     // for the convention in LTspice
     // the node with positive polarity always appear first, so the first pin of any power_source should be positive
-    double _voltage; //non-zero for resistor, voltage_source and capacitor
-    double _current; //non-zero for resistor,current_source and inductor
-    complex<double> _conductance;
 public:
-    friend class circuit;
     Component(const string &name,const string &n1,const string &n2,const double &value ){
         _identifier = name;
         _n1 = convert_node_to_int(n1);
         _n2 = convert_node_to_int(n2);
         _value = value;
-
     }
-
-    Component(){};
-
     ~Component(){};
 
     // order matters for the power source
@@ -55,10 +47,6 @@ public:
     int convert_node_to_int(string a);
 
     bool is_grounded();
-
-    double get_voltage();
-    double get_current();
-    complex<double> get_conductance();
 
 };
 

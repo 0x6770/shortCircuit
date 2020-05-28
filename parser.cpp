@@ -1,8 +1,8 @@
-#include "components_parser.hpp"
+#include "parser.hpp"
 
 double parse_number(string input){
     //assert(!isalpha(input[0])); //question
-    assert(!input.empty());
+    //assert(!input.empty());
 
     double result = 0.0;
     string multiplier = "";
@@ -36,32 +36,11 @@ double parse_number(string input){
 Component *parse_component(string input){
     stringstream ss;
     ss << input;
-    Component *temp = new Component();
-    Node *t0 = new Node();
-    Node *t1 = new Node();
     string name, pin1, pin2, type, value;
     ss >> name >> pin1 >> pin2 >> value;
     double real_value = parse_number(value);
-
-    if(name[0] == 'V'){
-        type = "voltage_source";
-    }else if(name[0] == 'I'){
-        type = "current_source";
-    }else if(name[0] == 'R'){
-        type = "resistor";
-    }else if(name[0] == 'L'){
-        type = "inductor";
-    }else if(name[0] == 'C'){
-        type = "capacitor";
-    }else{
-        cerr << "unrecognised type" << name << endl;
-        exit(1);
-    }
-
-    t0->set_name(pin1);
-    t1->set_name(pin2);
-    temp->set_comp(type,real_value,t0,t1);
-    return temp;
+    Component * single_component = new Component(name,pin1,pin2,real_value);
+    return single_component;
 }
 
 vector<double> generate_instants(string directive){
@@ -109,8 +88,7 @@ bool is_end(string input){
 }
 
 bool is_component(string input){
-    if(is_end(input) or is_directive(input) or is_comment(input)){
+    if(input[0] == '*' or input[0] == '.')
         return false;
-    }
     return true;
 }

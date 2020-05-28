@@ -1,53 +1,107 @@
-#ifndef circuit_hpp
-#define circuit_hpp
+#ifndef TRANSIENT_SIMULATOR_CIRCUIT_HPP
+#define TRANSIENT_SIMULATOR_CIRCUIT_HPP
 
 #include <iostream>
-#include <cmath>
+#include "Component.hpp"
+#include "node.hpp"
 #include <vector>
-#include <complex>
 #include <algorithm>
+#include <complex>
+#include <utility>
+#include <map>
+#include <cmath>
+using namespace std;
 
-class Component;
-
-class Node;
-
-class Circuit{
+class circuit {
 private:
-    double f;
-    double t;
-    vector<Component*> comp;
-    vector<Node*> nod;
-    vector<complex<double>> conductance;
-
+    double _frequency;
+    double _time;
+    vector<Component*> _components; // useful when calculating the conductance due to one single component;
+    vector<node*> _node_no_ground; // useful when constructing the vector b in the equation Ax = b;
+    node* GND = new node(0);
+    map<pair<int,int>,complex<double>> conductance_matrix; // should not vary with time;
+    map<int,complex<double>> column_matrix;  // b in Ax = b; should be empty initially;
+    map<pair<int,int>,double> super_node_equation; // to store super node equations and the node with know value;
+    map<int,int> forward_nodes;
+    map<int,int> backward_nodes; // only matters for super node
+    //vector<double> _instants;
 public:
-    Circuit(){};
-
-    ~Circuit(){};
-
-    Circuit(double f1, double t1, vector<Component*> temp){
-        f = f1;
-        t = t1;
-        comp = temp;
+    //the constructor for the circuit
+    //two functions
+    //1. create the new instances fo nodes(without ground node) from strings that has been found from the inputs
+    //2. stored these nodes in the circuit
+    circuit(double f,vector<Component*> components){
+        _frequency = f;
+        vector<int> nodes_int;
+        int temp1,temp2;
+        for(int i = 0; i < components.size();i++){
+            temp1 = components[i]->get_node(1);
+            nodes_int.push_back(temp1);
+            temp2 = components[i]->get_node(2);
+            nodes_int.push_back(temp2);
+            if(components[i]->is_voltage()){
+                pair<int,int> coffe = make_pair(temp1,temp2);
+                super_node_equation[coffe] = components[i]->get_value();
+                forward_nodes[temp1] = temp2;
+                backward_nodes[temp2] = temp1;
+            }
+        }
+        //remove duplicates strings in the nodes_string
+        sort(nodes_int.begin(),nodes_int.end());
+        nodes_int.erase(unique(nodes_int.begin(),nodes_int.end()),nodes_int.end());
+        nodes_int.erase(remove(nodes_int.begin(),nodes_int.end(),0),nodes_int.end()); // remove ground node
+        // create instances for node
+        // cout << nodes_string.size() << endl;
+        for(int i = 0; i< nodes_int.size();i++){
+                node *create_node = new node(nodes_int[i]);
+                for (int k = 0; k < components.size(); k++) {
+                    if (components[k]->get_node(1) == nodes_int[i] or
+                        components[k]->get_node(2) == nodes_int[i]) {
+                        create_node->add_branches(components[k]);
+                    }
+                }
+                create_node->set_current();
+                _node_no_ground.push_back(create_node);
+        }
     }
 
-    vector<complex<double>> get_conductance(); //done & checked
+    //helper function for the build_conductance_matrix, should not used for itself;
+    complex<double> single_conductance(Component* a);
 
-    void store_conductance(); //done
-    void store_node(); //TODO: requires work to be done
-    bool check_node_inside_nod(Node *temp); //TODO: helper function for store_node
+    //return the nodes vector without the ground node;
+    vector<node*> get_node_no_ground();
+
+    //get the ground node within one circuit;
+    node* get_GND();
+
+
+    // to fill map<pair<node*,node*>,complex<double> conductance_matrix;
+    //TODO:: special treatment for the the circuit containing the super node.
+    void build_conductance_matrix();
+
+    //helper function for the build_conductance_matrix, should not used for itself;
+    complex<double> conductance_between_nodes(node *a,node *b);
+
+    // one of the key advantage of using the int, is that the matrix values will be stored in order
+    map<pair<int,int>,complex<double>> get_conductance_matrix();
+
+    void pure_node_matrix_row(node* a);
+
+    void equation_matrix(node* a);
+
+    void direct_source_matrix(node* a);
+
+    void set_time(double t);
 
     double get_freq();
-    double get_time();
-
     vector<Component*> get_comp();
-    vector<Node*> get_nod();
-
-    Node* get_ground();
-    void set_ground(string ground);
 
 
-    complex<double> get_node_conductance(Node *a, Node *b);
-    void eliminate_ground_node(string ground);
+    node* get_node_from_int(int a);
+
+    map<int,complex<double>> get_column_matrix();
+
 };
 
-#endif
+
+#endif //TRANSIENT_SIMULATOR_CIRCUIT_HPP

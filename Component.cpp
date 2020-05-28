@@ -5,7 +5,6 @@ int Component::get_node(int n) {
         return _n1;
     if(n == 2)
         return _n2;
-    return 0;
 }
 
 double Component::get_value() {
@@ -50,16 +49,4 @@ bool Component::is_grounded(){
         return true;
     }
     return false;
-}
-
-double Component::get_current(){
-    return _current;
-}
-
-double Component::get_voltage(){
-    return _voltage;
-}
-
-complex<double> Component::get_conductance(){
-    return _conductance;
 }
