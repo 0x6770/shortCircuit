@@ -4,6 +4,7 @@
 #include "Component.hpp"
 #include "node.hpp"
 #include "circuit.hpp"
+#include "transient.hpp"
 #include <cassert>
 
 /**
@@ -28,7 +29,7 @@ Component *parse_component(string input);
  * @param directive .tran 0 <stop time> 0 <timestep>
  * @return vector<double> vector containing instants (0, <stop time>, <timestep>)
  */
-vector<double> generate_instants(string directive);
+transient* generate_simulation(string directive);
 
 /**
  * @brief determine whether a given string is comment or not
@@ -46,7 +47,7 @@ bool is_comment(string input);
  * @return true if input is directive
  * @return false if input is not directive
  */
-bool is_directive(string input);
+bool is_simulation(string input);
 
 /**
  * @brief determine whether a given string is end or not
@@ -65,5 +66,9 @@ bool is_end(string input);
  * @return false if input is not component
  */
 bool is_component(string input);
+
+bool is_sine(string input);
+
+vector<double> get_properties(string input);
 
 #endif //TRANSIENT_SIMULATOR_PARSER_HPP

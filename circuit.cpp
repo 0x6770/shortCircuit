@@ -111,6 +111,7 @@ void circuit::direct_source_matrix(node* a){
 }
 
 
+
 void circuit::build_conductance_matrix(){
     for(int i =0; i < _node_no_ground.size();i++){
         // the simplest one
@@ -168,4 +169,8 @@ void circuit::simplify(){
             backward_nodes[set_map.second] = set_map.first;
         }
     }
+}
+
+void circuit::build_current_matrix(double time){
+
 }

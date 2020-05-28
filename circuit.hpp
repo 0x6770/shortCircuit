@@ -133,7 +133,9 @@ public:
 
     // since the conductance_matrix won't change, we have to build the b_matrix seperately from conductance_matrix
     void build_current_matrix(double time);
+
 };
+
 
 
 #endif //TRANSIENT_SIMULATOR_CIRCUIT_HPP
