@@ -29,7 +29,7 @@ int main()
         if (is_component(line))
         {
             cerr << "Parsing component: " << line << endl;
-            circuit.push_back(parse_component(line));
+            circuit.push_back(parse_component(line, nodes));
         }
         else if (is_directive(line))
         {
@@ -56,24 +56,6 @@ int main()
     cout << "==============================" << endl;
     cout << "From: " << instants[0] << " to: " << instants[instants.size() - 1] << " with step: " << instants[1] << endl;
 
-    node_names = find_nodes(circuit);
-    node_names = remove_ground(node_names);
-
-    for (auto it = node_names.begin(); it != node_names.end(); it++)
-    {
-        string this_node = (*it);
-        vector<Component *> tmp_components;
-        for (auto jt = circuit.begin(); jt != circuit.end(); jt++)
-        {
-            if ((*jt)->contain_node(this_node))
-            {
-                tmp_components.push_back((*jt));
-            }
-        }
-        Node *tmp_node = new Node(tmp_components, this_node);
-        nodes.push_back(tmp_node);
-    }
-
     cout << endl;
     cout << endl;
     cout << "==============================" << endl;
@@ -99,7 +81,7 @@ int main()
     for (auto it = nodes.begin(); it != nodes.end(); it++)
     {
         cout << setw(5) << (*it)->get_name();
-        for (auto jt = node_names.begin(); jt != node_names.end(); jt++)
+        for (auto jt = nodes.begin(); jt != nodes.end(); jt++)
         {
             cout << setw(22) << (*it)->get_conductance(f, (*jt));
         }

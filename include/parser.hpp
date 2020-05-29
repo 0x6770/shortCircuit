@@ -1,5 +1,5 @@
-#ifndef components_parse_hpp
-#define components_parse_hpp
+#ifndef parser_hpp
+#define parser_hpp
 
 #include "components.hpp"
 
@@ -18,7 +18,7 @@ parse_number(string input);
  * @param input a string which defines a component
  * @return Component* a pointer to Component
  */
-Component *parse_component(string input);
+Component *parse_component(string input, vector<Node *> &nodes);
 
 /**
  * @brief generate instants from given directive

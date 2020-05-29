@@ -1,7 +1,14 @@
 #ifndef node_hpp
 #define node_hpp
 
-#include "components.hpp"
+#include <vector>
+#include <string>
+#include <complex>
+#include <algorithm>
+
+using namespace std;
+
+class Component;
 
 /**
  * @brief An abstaction of a physical node
@@ -30,10 +37,9 @@ public:
     /**
      * @brief Construct a new Node object
      * 
-     * @param components a vector of components that contains the current node
      * @param name the name of the current node
      */
-    Node(const vector<Component *> components, const string name);
+    Node(const string name);
 
     /**
      * @brief Destroy the Node object
@@ -48,7 +54,7 @@ public:
      * @return complex<double> conductance between current node and another node if another node is provided
      *                         total conductance related to the current node     if the current node is provided
      */
-    const complex<double> get_conductance(const double f, const string node);
+    const complex<double> get_conductance(const double f, vector<Component *> &used_voltages, Node *node);
 
     /**
      * @brief Get the components of the current node
@@ -56,6 +62,13 @@ public:
      * @return const vector<Component *> _components 
      */
     const vector<Component *> get_components();
+
+    /**
+     * @brief add a component to _components
+     * 
+     * @param component 
+     */
+    void add_components(Component *component);
 
     /**
      * @brief Get the name of the current node
@@ -106,6 +119,15 @@ public:
      * @param comp A component
      */
     void is_voltage_or_current(Component *comp);
+    friend ostream &operator<<(ostream &os, Node &node);
 };
+
+ostream &operator<<(ostream &os, Node &node);
+
+bool compare_node(Node *node_a, Node *node_b);
+
+Node *get_or_create_node(vector<Node *> &nodes, const string &node);
+
+bool used_super_node_voltage(vector<Component *> used_voltages, Component *voltage);
 
 #endif

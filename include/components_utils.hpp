@@ -5,10 +5,10 @@
 #include <iterator>
 #include "components.hpp"
 
-vector<string> remove_duplicates(vector<string> &nums);
+vector<Node *> remove_duplicates(vector<Node *> &nums);
 
-vector<string> find_nodes(const vector<Component *> &circuit);
+vector<Node *> find_nodes(const vector<Component *> &circuit);
 
-vector<string> remove_ground(const vector<string> &circuit);
+vector<Node *> remove_ground(const vector<Node *> &circuit);
 
 #endif

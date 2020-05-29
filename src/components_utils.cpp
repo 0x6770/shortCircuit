@@ -1,44 +1,43 @@
 #include "components_utils.hpp"
-#include <map>
 
-vector<string> remove_duplicates(vector<string> &nums)
+// vector<Node *> remove_duplicates(vector<Node *> &nums)
+// {
+//     for (int i = 0; i < nums.size() - 1; i++)
+//     {
+//         if (nums[i] == nums[i + 1])
+//         {
+//             nums.erase(nums.begin() + i);
+//             return remove_duplicates(nums);
+//         }
+//     }
+//     return nums;
+// }
+
+// vector<Node *> find_nodes(const vector<Component *> &circuit)
+// {
+//     vector<Node *> nodes;
+//     for (auto it = circuit.begin(); it != circuit.end(); it++)
+//     {
+//         nodes.push_back((*it)->get_node("p"));
+//         nodes.push_back((*it)->get_node("n"));
+//     }
+//     sort(nodes.begin(), nodes.end());
+//     auto it = find(nodes.begin(), nodes.end(), "0");
+//     if (it == nodes.end())
+//     {
+//         cerr << endl;
+//         cerr << "🚧 ERROR: circuit is not grounded. " << endl;
+//         cerr << endl;
+//     }
+
+//     return remove_duplicates(nodes);
+// }
+
+vector<Node *> remove_ground(const vector<Node *> &nodes)
 {
-    for (int i = 0; i < nums.size() - 1; i++)
-    {
-        if (nums[i] == nums[i + 1])
-        {
-            nums.erase(nums.begin() + i);
-            return remove_duplicates(nums);
-        }
-    }
-    return nums;
-}
-
-vector<string> find_nodes(const vector<Component *> &circuit)
-{
-    vector<string> nodes;
-    for (auto it = circuit.begin(); it != circuit.end(); it++)
-    {
-        nodes.push_back((*it)->get_node("p"));
-        nodes.push_back((*it)->get_node("n"));
-    }
-    sort(nodes.begin(), nodes.end());
-    auto it = find(nodes.begin(), nodes.end(), "0");
-    if (it == nodes.end())
-    {
-        cerr << endl;
-        cerr << "🚧 ERROR: circuit is not grounded. " << endl;
-        cerr << endl;
-    }
-
-    return remove_duplicates(nodes);
-}
-
-vector<string> remove_ground(const vector<string> &circuit)
-{
-    vector<string> tmp_circuit = circuit;
-    tmp_circuit.erase(tmp_circuit.begin());
-    return tmp_circuit;
+    vector<Node *> res_nodes = nodes;
+    res_nodes.erase(res_nodes.begin());
+    return res_nodes;
 }
 
 int demension(vector<string> nodes)
@@ -58,7 +57,7 @@ bool is_powersource(Component *component)
 //map<string,string> nodes;
 pair<string, string> nodes;
 
-complex<double> find_conductance(string node1, string node2, vector<Component *> circuit, double f, double t)
+complex<double> find_conductance(Node *node1, Node *node2, vector<Component *> circuit, double f, double t)
 {
     vector<Component *> temp;
     if (node1 == node2)

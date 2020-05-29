@@ -1,6 +1,8 @@
 #ifndef components_hpp
 #define components_hpp
 
+#include "component.hpp"
+
 #include <iostream>
 #include <complex>
 #include <vector>
@@ -10,68 +12,10 @@
 
 using namespace std;
 
-class Component
-{
-protected:
-    string _type;
-    string _name;
-    string _node_p;
-    string _node_n;
-    double _property = 0;
-    double _bias = 0.0;
-    double _amplitude = 0.0;
-    double _frequency = 0.0;
-    bool _is_grounded = false;
-
-public:
-    Component() {}
-    const string get_node(string x)
-    {
-        string node = x == "p" ? _node_p : _node_n;
-        return node;
-    }
-    const bool contain_node(string node)
-    {
-        if (node == _node_p || node == _node_n)
-        {
-            return true;
-        }
-        return false;
-    }
-    const bool check_grounded()
-    {
-        return _is_grounded;
-    }
-    const string get_name()
-    {
-        return _name;
-    }
-    virtual double get_voltage(double t, string node)
-    {
-        double result = 0.0;
-        return result;
-    }
-    virtual double get_current(double t, string node)
-    {
-        double result = 0.0;
-        return result;
-    }
-    virtual complex<double> get_conductance(double f)
-    {
-        complex<double> result = {0.0, 0.0};
-        return result;
-    }
-    string get_type()
-    {
-        return _type;
-    }
-    virtual ~Component() {}
-};
-
 class Inductor : public Component
 {
 public:
-    Inductor(string name, string node_p, string node_n, double property)
+    Inductor(string name, Node *node_p, Node *node_n, double property)
     {
         assert(node_p != node_n);
         _type = "L";
@@ -90,7 +34,7 @@ public:
 class Capacitor : public Component
 {
 public:
-    Capacitor(string name, string node_p, string node_n, double property)
+    Capacitor(string name, Node *node_p, Node *node_n, double property)
     {
         assert(node_p != node_n);
         _type = "C";
@@ -109,7 +53,7 @@ public:
 class Resistor : public Component
 {
 public:
-    Resistor(string name, string node_p, string node_n, double property)
+    Resistor(string name, Node *node_p, Node *node_n, double property)
     {
         assert(node_p != node_n);
         _type = "R";
@@ -128,7 +72,7 @@ public:
 class Voltage : public Component
 {
 public:
-    Voltage(string name, string node_p, string node_n, double amplitude)
+    Voltage(string name, Node *node_p, Node *node_n, double amplitude)
     {
         assert(node_p != node_n);
         _type = "V";
@@ -142,7 +86,7 @@ public:
         }
     }
 
-    double get_voltage(double t, string node)
+    double get_voltage(double t, Node *node)
     {
         if (node == _node_p)
         {
@@ -165,7 +109,7 @@ public:
 class SINE_Voltage : public Component
 {
 public:
-    SINE_Voltage(string name, string node_p, string node_n, double bias, double amplitude, double frequency)
+    SINE_Voltage(string name, Node *node_p, Node *node_n, double bias, double amplitude, double frequency)
     {
         assert(node_p != node_n);
         _type = "V";
@@ -185,11 +129,11 @@ public:
     {
 
         double result = _bias + _amplitude * sin(_frequency * t);
-        if (node == _node_p)
+        if (node == _node_p->get_name())
         {
             return result;
         }
-        else if (node == _node_n)
+        else if (node == _node_n->get_name())
         {
             return -1.0 * result;
         }
@@ -208,7 +152,7 @@ class Current : public Component
 {
 protected:
 public:
-    Current(string name, string node_p, string node_n, double amplitude)
+    Current(string name, Node *node_p, Node *node_n, double amplitude)
     {
         assert(node_p != node_n);
         _type = "I";
@@ -220,11 +164,11 @@ public:
 
     double get_current(double t, string node)
     {
-        if (node == _node_p)
+        if (node == _node_p->get_name())
         {
             return _amplitude;
         }
-        else if (node == _node_n)
+        else if (node == _node_n->get_name())
         {
             return -1.0 * _amplitude;
         }
