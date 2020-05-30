@@ -9,6 +9,13 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     // ifstream input_file("./input/test_input.net");
+    if (argc < 2)
+    {
+        cerr << endl;
+        cerr << "🚧  ERROR: no input file provided as command line argument" << endl;
+        cerr << endl;
+        exit(1);
+    }
     ifstream input_file(argv[1]);
     vector<Component *> components;
     vector<Node *> nodes;

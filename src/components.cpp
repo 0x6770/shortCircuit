@@ -20,6 +20,29 @@ Capacitor::Capacitor(string name, Node *node_p, Node *node_n, double property)
     _property = property;
 }
 
+double Capacitor::update_voltage(double t, double current, Node *node)
+{
+}
+
+double Capacitor::get_voltage(double t, Node *node)
+{
+    if (node == _node_p)
+    {
+        return _amplitude;
+    }
+    else if (node == _node_n)
+    {
+        return -1.0 * _amplitude;
+    }
+    else
+    {
+        cerr << endl;
+        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
+        cerr << endl;
+        exit(1);
+    }
+}
+
 Resistor::Resistor(string name, Node *node_p, Node *node_n, double property)
 {
     assert(node_p != node_n);
@@ -84,15 +107,15 @@ SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias,
     }
 }
 
-double SINE_Voltage::get_voltage(double t, string node)
+double SINE_Voltage::get_voltage(double t, Node *node)
 {
 
     double result = _bias + _amplitude * sin(_frequency * t);
-    if (node == _node_p->get_name())
+    if (node == _node_p)
     {
         return result;
     }
-    else if (node == _node_n->get_name())
+    else if (node == _node_n)
     {
         return -1.0 * result;
     }
@@ -116,13 +139,13 @@ Current::Current(string name, Node *node_p, Node *node_n, double amplitude)
     _amplitude = amplitude;
 }
 
-double Current::get_current(double t, string node)
+double Current::get_current(double t, Node *node)
 {
-    if (node == _node_p->get_name())
+    if (node == _node_p)
     {
         return _amplitude;
     }
-    else if (node == _node_n->get_name())
+    else if (node == _node_n)
     {
         return -1.0 * _amplitude;
     }

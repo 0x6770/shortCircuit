@@ -27,9 +27,12 @@ protected:
 
 public:
     Component() {}
-    Node *get_node(string x);
+
+    string get_type();
 
     string get_name();
+
+    Node *get_node(string x);
 
     virtual double get_voltage(double t, Node *node);
 
@@ -38,8 +41,6 @@ public:
     virtual double get_property();
 
     virtual double get_conductance(double f);
-
-    string get_type();
 
     bool contain_node(string node);
 

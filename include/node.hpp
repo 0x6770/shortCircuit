@@ -18,19 +18,12 @@ class Node
 {
 private:
     string _name;
+    double _node_voltage;
     vector<Component *> _components;
     vector<Component *> _voltages;
     vector<Component *> _currents;
     bool _contain_voltage = false;
     bool _contain_current = false;
-    /**
-     * @brief describe how the current node is connected with voltage source
-     *        ""    if no voltage source
-     *        "g"   if there is grounded source
-     *        "p"   if there is no grounded source but a floating voltage source, and the current node is the Positive terminal
-     *        "n"   if there is no grounded source but a floating voltage source, and the current node is the Negative terminal
-     */
-    string _voltage_state = "";
 
 public:
     /**
@@ -77,30 +70,10 @@ public:
     string get_name();
 
     /**
-     * @brief Get the state of how the current node is connected with voltage source
-     * 
-     * @return string ""    if no voltage source
-     *                "g"   if there is grounded source
-     *                "p"   if there is no grounded source but a floating voltage source, and the current node is the Positive terminal
-     *                "n"   if there is no grounded source but a floating voltage source, and the current node is the Negative terminal
-     */
-    string get_voltage_state();
-
-    // /**
-    //  * @brief Get the "value" of the current node for "b" in A·x=b
-    //  *
-    //  * @param t the required time instant
-    //  * @return double get_current()      if   the current node does not contain voltage source OR is the negative node of a floating node
-    //  *                                   else get_voltage()
-    //  */
-    // double get_value(const double t);
-
-    /**
      * @brief Get the voltage of the current node
      * 
      * @param t the required time instant
-     * @return double the voltage value at the required instant     if      the current node contains a grounded voltage source OR the positive node of a floating node
-     *                                                              else    0
+     * @return double the nodal voltage value from previous instant
      */
     double get_voltage(const double t);
 
@@ -117,7 +90,6 @@ public:
      * 
      * @param comp A component
      */
-    void is_voltage_or_current(Component *comp);
     friend ostream &operator<<(ostream &os, Node &node);
 };
 

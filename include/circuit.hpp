@@ -23,6 +23,8 @@ private:
 public:
     Circuit(vector<Node *> nodes, vector<Component *> components, vector<double> instants);
 
+    void update_b(double t);
+
     friend ostream &operator<<(ostream &os, Circuit &circuit);
 };
 
