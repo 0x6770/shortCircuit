@@ -1,3 +1,8 @@
+#include "components.hpp"
+#include "node.hpp"
+#include "parser.hpp"
+// #include "circuit.hpp"
+
 #include <iostream>
 #include <iomanip>
 #include <cassert>
@@ -5,16 +10,15 @@
 #include <sstream>
 #include <string>
 
-#include "components_utils.hpp"
-#include "parser.hpp"
-#include "components.hpp"
-#include "circuit.hpp"
-
 using namespace std;
 
 int main()
 {
-    ifstream input_file("./input/test_input_4.net");
+    ifstream input_file("./input/test_input.net");
+
+    double f = 1000;
+    double t = 0.001;
+
     vector<Component *> components;
     vector<Node *> nodes;
     vector<double> instants;
@@ -25,7 +29,7 @@ int main()
         if (is_component(line))
         {
             cerr << "⚙️  Parsing component: " << line << endl;
-            components.push_back(parse_component(line, nodes));
+            components.push_back(parse_component(line));
         }
         else if (is_directive(line))
         {
@@ -46,6 +50,11 @@ int main()
         }
     }
 
-    Circuit *circuit = new Circuit(nodes, components, instants);
-    cout << *circuit << endl;
+    cout << components.size() << " components in total" << endl;
+    cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
+    for (auto it = components.begin(); it != components.end(); it++)
+    {
+        // cout << "conductance:\t" << (*it)->getPin(1) << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->is_grounded() << endl;
+    }
 }

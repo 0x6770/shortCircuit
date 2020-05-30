@@ -5,7 +5,6 @@
 #include <fstream>
 
 #include "components.hpp"
-#include "components_utils.hpp"
 #include "parser.hpp"
 #include "node.hpp"
 
@@ -29,7 +28,7 @@ int main()
         if (is_component(line))
         {
             cerr << "Parsing component: " << line << endl;
-            circuit.push_back(parse_component(line, nodes));
+            circuit.push_back(parse_component(line));
         }
         else if (is_directive(line))
         {
@@ -64,7 +63,7 @@ int main()
     cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
     for (auto it = circuit.begin(); it != circuit.end(); it++)
     {
-        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->is_grounded() << endl;
     }
 
     cout << endl;

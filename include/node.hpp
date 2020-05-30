@@ -1,133 +1,63 @@
 #ifndef node_hpp
 #define node_hpp
 
+#include "component.hpp"
+
+#include <iostream>
 #include <vector>
-#include <string>
 #include <complex>
-#include <algorithm>
+#include <string>
 
 using namespace std;
 
-class Component;
-
-/**
- * @brief An abstaction of a physical node
- * 
- */
 class Node
 {
 private:
     string _name;
-    vector<Component *> _components;
-    vector<Component *> _voltages;
-    vector<Component *> _currents;
-    bool _contain_voltage = false;
-    bool _contain_current = false;
-    Node *_super_node_positive;
-    /**
-     * @brief describe how the current node is connected with voltage source
-     *        ""    if no voltage source
-     *        "g"   if there is grounded source
-     *        "p"   if there is no grounded source but a floating voltage source, and the current node is the Positive terminal
-     *        "n"   if there is no grounded source but a floating voltage source, and the current node is the Negative terminal
-     */
-    string _voltage_state = "";
+    int _index;
+    // default value for current and voltage are zero
+    double _current = 0.0;
+    double _voltage = 0.0;
+    vector<Component *> _branches;
+    bool _is_connected_current = false;
+    bool _is_connected_voltage = false;
 
 public:
-    /**
-     * @brief Construct a new Node object
-     * 
-     * @param name the name of the current node
-     */
-    Node(const string name);
+    //empty node constructors
+    Node(string name)
+    {
+        _name = name;
+    };
 
-    /**
-     * @brief Destroy the Node object
-     * 
-     */
-    ~Node();
-
-    /**
-     * @brief Get the conductance between current node and another node or total conductance related to the current node
-     * 
-     * @param node name of a node
-     * @return complex<double> conductance between current node and another node if another node is provided
-     *                         total conductance related to the current node     if the current node is provided
-     */
-    const complex<double> get_conductance(const double f, vector<Component *> &used_voltages, Node *node);
-
-    /**
-     * @brief Get the components of the current node
-     * 
-     * @return const vector<Component *> _components 
-     */
-    const vector<Component *> get_components();
-
-    /**
-     * @brief add a component to _components
-     * 
-     * @param component 
-     */
-    void add_components(Component *component);
-
-    /**
-     * @brief Get the name of the current node
-     * 
-     * @return string 
-     */
     string get_name();
 
-    /**
-     * @brief Get the state of how the current node is connected with voltage source
-     * 
-     * @return string ""    if no voltage source
-     *                "g"   if there is grounded source
-     *                "p"   if there is no grounded source but a floating voltage source, and the current node is the Positive terminal
-     *                "n"   if there is no grounded source but a floating voltage source, and the current node is the Negative terminal
-     */
-    string get_voltage_state();
+    int get_index();
+
+    double get_current();
+
+    double get_voltage();
+
+    vector<Component *> get_branches();
 
     /**
-     * @brief Get the "value" of the current node for "b" in A·x=b
+     * @brief add branches to the current node
      * 
-     * @param t the required time instant
-     * @return double get_current()      if   the current node does not contain voltage source OR is the negative node of a floating node
-     *                                   else get_voltage()
+     * @param branch a Component
      */
-    double get_value(const double t);
+    void add_branches(Component *branch);
 
     /**
-     * @brief Get the voltage of the current node
+     * @brief check whether a given node is equal to the current node
      * 
-     * @param t the required time instant
-     * @return double the voltage value at the required instant     if      the current node contains a grounded voltage source OR the positive node of a floating node
-     *                                                              else    0
+     * @param a a Node
+     * @return true     if the given node is equal to the current node
+     * @return false    if the given node is not equal to the current node 
      */
-    double get_voltage(const double t);
+    bool operator==(Node *a);
 
-    /**
-     * @brief Get the currrent of the current node
-     * 
-     * @param t the required time instant
-     * @return double the current value at the required instant
-     */
-    double get_current(const double t);
+    bool get_is_connected_voltage();
 
-    /**
-     * @brief check whether a component is voltage source or current source
-     * 
-     * @param comp A component
-     */
-    void is_voltage_or_current(Component *comp);
-    friend ostream &operator<<(ostream &os, Node &node);
+    void set_current();
 };
 
-ostream &operator<<(ostream &os, Node &node);
-
-bool compare_node(Node *node_a, Node *node_b);
-
-Node *get_or_create_node(vector<Node *> &nodes, const string &node);
-
-bool used_super_node_voltage(vector<Component *> used_voltages, Component *voltage);
-
-#endif
+#endif // node_hpp

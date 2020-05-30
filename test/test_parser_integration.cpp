@@ -8,7 +8,6 @@
 #include <fstream>
 
 #include "components.hpp"
-#include "components_utils.hpp"
 #include "parser.hpp"
 
 using namespace std;
@@ -45,6 +44,6 @@ int main()
     for (auto it = circuit.begin(); it != circuit.end(); it++)
     {
         // cout << "conductance:\t" << (*it)->getPin(1) << endl;
-        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->is_grounded() << endl;
     }
 }

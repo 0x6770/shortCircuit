@@ -63,7 +63,7 @@ double parse_number(string input)
 
 //* tested for R,C,L
 //! TODO V and I
-Component *parse_component(string input, vector<Node *> &nodes)
+Component *parse_component(string input)
 {
     stringstream ss;
     ss << input;
@@ -73,36 +73,26 @@ Component *parse_component(string input, vector<Node *> &nodes)
     {
         ss >> name >> node_p >> node_n >> property;
         real_property = parse_number(property);
-        Node *real_node_p = get_or_create_node(nodes, node_p);
-        Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tresistance: " << real_resistance << endl;
-        Component *result = new Resistor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        Component *result = new Resistor(name, node_p, node_n, real_property);
         return result;
     }
     else if (input[0] == 'L')
     {
         ss >> name >> node_p >> node_n >> property;
         real_property = parse_number(property);
-        Node *real_node_p = get_or_create_node(nodes, node_p);
-        Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tinductance: " << real_inductance << endl;
-        Component *result = new Inductor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        Component *result = new Inductor(name, node_p, node_n, real_property);
+
         return result;
     }
     else if (input[0] == 'C')
     {
         ss >> name >> node_p >> node_n >> property;
         real_property = parse_number(property);
-        Node *real_node_p = get_or_create_node(nodes, node_p);
-        Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
-        Component *result = new Capacitor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        Component *result = new Capacitor(name, node_p, node_n, real_property);
+
         return result;
     }
     else if (input[0] == 'V')
@@ -115,22 +105,16 @@ Component *parse_component(string input, vector<Node *> &nodes)
             real_amplitude = parse_number(buffer2);
             // cout << "buffer3.substr(0, (buffer3.size() - 1))" << buffer3.substr(0, (buffer3.size() - 1)) << endl;
             real_frequency = parse_number(buffer3.substr(0, (buffer3.size() - 1)));
-            Node *real_node_p = get_or_create_node(nodes, node_p);
-            Node *real_node_n = get_or_create_node(nodes, node_n);
-            Component *result = new SINE_Voltage(name, real_node_p, real_node_n, real_bias, real_amplitude, real_frequency);
-            real_node_p->add_components(result);
-            real_node_n->add_components(result);
+            Component *result = new SINE_Voltage(name, node_p, node_n, real_bias, real_amplitude, real_frequency);
+
             return result;
         }
         else
         {
             // cerr << "DC " << name << " " << node_p << " " << node_n << " " << buffer1 << endl;
             real_amplitude = parse_number(buffer1);
-            Node *real_node_p = get_or_create_node(nodes, node_p);
-            Node *real_node_n = get_or_create_node(nodes, node_n);
-            Component *result = new Voltage(name, real_node_p, real_node_n, real_amplitude);
-            real_node_p->add_components(result);
-            real_node_n->add_components(result);
+            Component *result = new Voltage(name, node_p, node_n, real_amplitude);
+
             return result;
         }
     }
@@ -138,12 +122,9 @@ Component *parse_component(string input, vector<Node *> &nodes)
     {
         ss >> name >> node_p >> node_n >> amplitude;
         real_amplitude = parse_number(amplitude);
-        Node *real_node_p = get_or_create_node(nodes, node_p);
-        Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
-        Component *result = new Current(name, real_node_p, real_node_n, real_amplitude);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        Component *result = new Current(name, node_p, node_n, real_amplitude);
+
         return result;
     }
 };

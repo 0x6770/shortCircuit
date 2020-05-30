@@ -18,7 +18,7 @@ parse_number(string input);
  * @param input a string which defines a component
  * @return Component* a pointer to Component
  */
-Component *parse_component(string input, vector<Node *> &nodes);
+Component *parse_component(string input);
 
 /**
  * @brief generate instants from given directive
@@ -73,4 +73,4 @@ bool is_end(string input);
  */
 bool is_component(string input);
 
-#endif
+#endif // parser_hpp
