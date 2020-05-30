@@ -1,0 +1,10 @@
+* A test circuit to demonstrate SPICE syntax
+V2 N003 N004 4
+R1 0 N004 4
+R2 0 N002 8
+R3 N001 N002 1
+R4 N002 N003 2
+V1 N001 0 1
+.tran 0 1 0 1m
+.backanno
+.end
