@@ -1,0 +1,4 @@
+# this file must present in order to include an empty bin folder in git
+# git will ignore everything but .gitignore
+*
+!.gitignore
