@@ -9,9 +9,19 @@ LIBRARIES   =
 LIB 		= lib
 EXECUTABLE  = main
 
-all: $(BIN)/$(EXECUTABLE)
+bold=$(tput bold)
+normal=$(tput sgr0)
 
-run: clean all
+all: 
+	@echo "\t\033[1mCompile and run \033[0m\n"
+	@echo "\tmake run net=< input_file in input/ >"
+	@echo "\t\033[1mExample\033[0m: make run net=test_input"
+	@echo "\n\n"
+	@echo "\t\033[1mTest \033[0m\n"
+	@echo "\tmake test test_target=< test_file in test />"
+	@echo "\t\033[1mExample\033[0m: make test test_target=test_circuit"
+
+run: clean $(BIN)/$(EXECUTABLE)
 	clear
 	@echo "🚀 Executing..."
 	./$(BIN)/$(EXECUTABLE) ./input/$(net).net
