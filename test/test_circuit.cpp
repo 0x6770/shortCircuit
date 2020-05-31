@@ -8,10 +8,10 @@ using namespace std;
 
 int main()
 {
-    ifstream input_file("./input/test_input.net");
+    ifstream input_file("./input/test_input_6.net");
     vector<Component *> components;
     vector<Node *> nodes;
-    vector<double> instants;
+    vector<double> time_params; // [step, end]
     string line;
 
     while (getline(input_file, line))
@@ -26,7 +26,7 @@ int main()
             if (is_tran(line))
             {
                 cerr << "⏱  Parsing directive: " << line << endl;
-                instants = generate_instants(line);
+                time_params = parse_tran(line);
             }
             else if (is_end(line))
             {
@@ -40,6 +40,7 @@ int main()
         }
     }
 
-    Circuit *circuit = new Circuit(nodes, components, instants);
-    cout << *circuit << endl;
+    Circuit *circuit = new Circuit(nodes, components, time_params[0], time_params[1]);
+    // cout << *circuit << endl;
+    circuit->print();
 }

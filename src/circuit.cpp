@@ -1,11 +1,11 @@
 #include "circuit.hpp"
 
-Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, vector<double> instants)
+Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double step, double end)
 {
     _components = components;
     _nodes = nodes;
-    _instants = instants;
-
+    _step = step;
+    _end = end;
     // find out all the voltage sources in the components
     for (auto component = _components.begin(); component != _components.end(); component++)
     {
@@ -19,12 +19,9 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, vector<do
     // initialise _A and _b to correct dimension with zeros
     int dimension = _nodes.size() + _voltages.size() - 1;
     _A = Eigen::MatrixXd::Zero(dimension, dimension);
-    _b = Eigen::MatrixXd::Zero(dimension, 1);
+    _b = Eigen::VectorXd::Zero(dimension, 1);
 
-    // calculate and fill in elements in _b and _A
-    // _A = | G B | where G is conductance matrix, B describes potential differences across voltage sources
-    //      | C 0 | C = B^T
-    // fill in the Conductance matrix G for _A
+    // determine whether the current circuit has a ground
     if (_nodes[0]->get_name() != "0")
     {
         cerr << endl;
@@ -32,6 +29,11 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, vector<do
         cerr << endl;
         exit(1);
     }
+
+    // calculate and fill in elements in _b and _A
+    // _A = | G B | where G is conductance matrix, B describes potential differences across voltage sources
+    //      | C 0 | C = B^T
+    // fill in the Conductance matrix G for _A
     for (auto it = _nodes.begin() + 1; it != _nodes.end(); it++)
     {
         int row = it - _nodes.begin() - 1;
@@ -40,9 +42,9 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, vector<do
         {
             int col = jt - _nodes.begin() - 1;
             // cout << *(*jt) << " row: " << row << " col: " << col << endl;
-            _A(row, col) = (*it)->get_conductance(_f, (*jt));
+            _A(row, col) = (*it)->get_conductance(*jt);
         }
-        double current = (*it)->get_current(_t);
+        double current = (*it)->get_current();
         _b(row, 0) = current;
     }
 
@@ -64,17 +66,62 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, vector<do
                 _A(row, col) = -1.0;
                 _A(col, row) = -1.0;
             }
-            _b(row, 0) = (*voltage)->get_voltage(_t, (*voltage)->get_node("p"));
+            _b(row, 0) = (*voltage)->get_voltage_across(_step, (*voltage)->get_node("p"));
         }
     }
 }
+
+Eigen::VectorXd Circuit::solve()
+{
+    // solve x from x = A^{-1}·b
+    Eigen::VectorXd res = _A.inverse() * _b;
+
+    // update nodal voltages
+    for (auto node = _nodes.begin() + 1; node != _nodes.end(); node++)
+    {
+        int row = node - _nodes.begin() - 1;
+        (*node)->set_node_voltage(res[row]);
+    }
+
+    // update current flow through voltage sources
+    for (auto voltage = _voltages.begin(); voltage != _voltages.end(); voltage++)
+    {
+        int row = _nodes.size() + voltage - _voltages.begin() - 1;
+        (*voltage)->set_current_through(res[row]);
+    }
+
+    // TODO discuss whether this should be seperated into two loops
+    for (auto comp = _components.begin(); comp != _components.end(); comp++)
+    {
+        // update current flow through Inductors
+        if ((*comp)->get_type() == "L")
+        {
+            double pre_voltage = -(*comp)->get_node("p")->get_node_voltage() + (*comp)->get_node("n")->get_node_voltage();
+            double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
+            double result = pre_current + (_step * pre_voltage) / (2.0 * (*comp)->get_property());
+            // cout << "result: " << result << " pre_voltage: " << pre_voltage << " _step: " << _step << " pre_current: " << pre_current << " (*comp)->get_property(): " << (*comp)->get_property() << endl;
+            (*comp)->set_current_through(result);
+        }
+        // update voltage across Capacitor
+        else if ((*comp)->get_type() == "C")
+        {
+            // cerr << "here is a capacitor " << endl;
+            double pre_voltage = (*comp)->get_voltage_across(_step, (*comp)->get_node("p"));
+            double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
+            double result = pre_voltage + (_step * pre_current / (2.0 * (*comp)->get_property()));
+            // cout << "pre_voltage: " << pre_voltage << "_step: " << _step << "pre_current: " << pre_current << "(*comp)->get_property()" << (*comp)->get_property() << endl;
+            (*comp)->set_voltage_across(result);
+        }
+    }
+    return res;
+};
 
 void Circuit::update_b(double t)
 {
     for (auto it = _nodes.begin() + 1; it != _nodes.end(); it++)
     {
         int row = it - _nodes.begin() - 1;
-        double current = (*it)->get_current(_t);
+        double current = (*it)->get_current();
         _b(row, 0) = current;
     }
     for (auto voltage = _voltages.begin(); voltage != _voltages.end(); voltage++)
@@ -85,44 +132,59 @@ void Circuit::update_b(double t)
         {
             int col = node - _nodes.begin() - 1;
             // cout << "row: " << row << "col: " << col << endl;
-            _b(row, 0) = (*voltage)->get_voltage(_t, (*voltage)->get_node("p"));
+            _b(row, 0) = (*voltage)->get_voltage_across(_step, (*voltage)->get_node("p"));
         }
     }
 }
 
+void Circuit::print()
+{
+    // cout << setw(12) << "get_name()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current_through(t)" << setw(18) << "get_voltage_across(t)" << endl;
+    // for (auto it = _components.begin(); it != _components.end(); it++)
+    // {
+    //     cout << setw(12) << (*it)->get_name() << setw(20) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current_through(_t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(_t, (*it)->get_node("p")) << endl;
+    // }
+    Eigen::VectorXd res = _A.inverse() * _b;
+    for (int i = 0; i < res.rows(); i++)
+    {
+        cout << res[i] << ", ";
+    }
+    cout << endl;
+}
+
 ostream &operator<<(ostream &os, Circuit &circuit)
 {
-    os << endl;
-    os << endl;
-    os << "==================================================" << endl;
-    os << "✅ " << circuit._instants.size() << " instants in total" << endl;
-    os << "==================================================" << endl;
-    os << "From " << circuit._instants[0] << " to " << circuit._instants[circuit._instants.size() - 1] << ", with step: " << circuit._instants[1] << endl;
+    // os << endl;
+    // os << endl;
+    // os << "==================================================" << endl;
+    // os << "✅ " << circuit._end / circuit._step << " instants in total" << endl;
+    // os << "==================================================" << endl;
+    // os << "From " << 0 << " to " << circuit._end << ", with step: " << circuit._step << endl;
 
-    os << endl;
-    os << endl;
-    os << "==================================================" << endl;
-    os << "✅ " << circuit._components.size() << " components in total" << endl;
-    os << "==================================================" << endl;
-    os << setw(12) << "get_type()" << setw(20) << "get_property()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
-    for (auto it = circuit._components.begin(); it != circuit._components.end(); it++)
-    {
-        os << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_property() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current(circuit._t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(circuit._t, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
-    }
+    // os << endl;
+    // os << endl;
+    // os << "==================================================" << endl;
+    // os << "✅ " << circuit._components.size() << " components in total" << endl;
+    // os << "==================================================" << endl;
+    // os << setw(12) << "get_type()" << setw(20) << "get_property()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage_across(t)" << setw(18) << "check_grounded()" << endl;
+    // for (auto it = circuit._components.begin(); it != circuit._components.end(); it++)
+    // {
+    //     os << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_property() << setw(20) << (*it)->get_conductance() << setw(16) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current(circuit._step, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(circuit._step, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
+    // }
 
-    os << endl;
-    os << endl;
-    os << "==================================================" << endl;
-    os << "✅ " << circuit._nodes.size() - 1 << " nodes in total except ground" << endl;
-    os << "==================================================" << endl;
-    os << setw(20) << "Node Names:" << setw(20) << "get_current:" << endl;
-    for (auto it = circuit._nodes.begin(); it != circuit._nodes.end(); it++)
-    {
-        if ((*it)->get_name() != "0")
-        {
-            os << setw(20) << (*it)->get_name() << setw(20) << (*it)->get_current(circuit._t) << endl;
-        }
-    }
+    // os << endl;
+    // os << endl;
+    // os << "==================================================" << endl;
+    // os << "✅ " << circuit._nodes.size() - 1 << " nodes in total except ground" << endl;
+    // os << "==================================================" << endl;
+    // os << setw(20) << "Node Names:" << setw(20) << "get_current:" << endl;
+    // for (auto it = circuit._nodes.begin(); it != circuit._nodes.end(); it++)
+    // {
+    //     if ((*it)->get_name() != "0")
+    //     {
+    //         os << setw(20) << (*it)->get_name() << setw(20) << (*it)->get_current(circuit._step) << endl;
+    //     }
+    // }
 
     os << endl;
     os << endl;
@@ -139,4 +201,16 @@ ostream &operator<<(ostream &os, Circuit &circuit)
     os << circuit._b << endl;
 
     return os;
+}
+
+void Circuit::loop()
+{
+    int steps = _end / _step;
+    for (int i = 0; i < steps; i++)
+    {
+        // cerr << *this << endl;
+        print();
+        solve();
+        update_b(_step);
+    }
 }

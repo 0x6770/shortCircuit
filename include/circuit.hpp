@@ -4,6 +4,7 @@
 #include "parser.hpp"
 #include "component.hpp"
 #include "../Eigen/Core"
+#include "../Eigen/Dense"
 
 using namespace std;
 
@@ -13,17 +14,22 @@ private:
     vector<Component *> _components;
     vector<Component *> _voltages;
     vector<Node *> _nodes;
-    vector<double> _instants;
     vector<Component *> _used_voltages;
     Eigen::MatrixXd _A; // should not vary with time;
-    Eigen::MatrixXd _b; // b in Ax = b; should be empty initially;
-    double _f = 1000;
-    double _t = 1;
+    Eigen::VectorXd _b; // b in Ax = b; should be empty initially;
+    double _step = 0.0; // step of time
+    double _end = 0.0;
 
 public:
-    Circuit(vector<Node *> nodes, vector<Component *> components, vector<double> instants);
+    Circuit(vector<Node *> nodes, vector<Component *> components, double step, double end);
 
     void update_b(double t);
+
+    Eigen::VectorXd solve();
+
+    void print();
+
+    void loop();
 
     friend ostream &operator<<(ostream &os, Circuit &circuit);
 };

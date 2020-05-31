@@ -10,6 +10,30 @@ Inductor::Inductor(string name, Node *node_p, Node *node_n, double property)
     _property = property;
 }
 
+double Inductor::get_current(Node *node)
+{
+    if (node == _node_p)
+    {
+        return _current_through;
+    }
+    else if (node == _node_n)
+    {
+        return -1.0 * _current_through;
+    }
+    else
+    {
+        cerr << endl;
+        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
+        cerr << endl;
+        exit(1);
+    }
+};
+
+double Inductor::get_current_through(Node *node)
+{
+    return get_current(node);
+}
+
 Capacitor::Capacitor(string name, Node *node_p, Node *node_n, double property)
 {
     assert(node_p != node_n);
@@ -20,19 +44,15 @@ Capacitor::Capacitor(string name, Node *node_p, Node *node_n, double property)
     _property = property;
 }
 
-double Capacitor::update_voltage(double t, double current, Node *node)
-{
-}
-
-double Capacitor::get_voltage(double t, Node *node)
+double Capacitor::get_voltage_across(double t, Node *node)
 {
     if (node == _node_p)
     {
-        return _amplitude;
+        return _voltage_across;
     }
     else if (node == _node_n)
     {
-        return -1.0 * _amplitude;
+        return -1.0 * _voltage_across;
     }
     else
     {
@@ -41,6 +61,11 @@ double Capacitor::get_voltage(double t, Node *node)
         cerr << endl;
         exit(1);
     }
+}
+
+void Capacitor::set_voltage_across(double voltage)
+{
+    _voltage_across = voltage;
 }
 
 Resistor::Resistor(string name, Node *node_p, Node *node_n, double property)
@@ -53,9 +78,16 @@ Resistor::Resistor(string name, Node *node_p, Node *node_n, double property)
     _property = property;
 }
 
-double Resistor::get_conductance(double f)
+double Resistor::get_conductance()
 {
     return double(1.0 / _property);
+}
+
+double Resistor::get_current_through(Node *node)
+{
+    double direction = (node == _node_p) ? 1.0 : -1.0;
+    double magnitude = (_node_p->get_node_voltage() - _node_n->get_node_voltage()) / _property;
+    return direction * magnitude;
 }
 
 Voltage::Voltage(string name, Node *node_p, Node *node_n, double amplitude)
@@ -65,22 +97,22 @@ Voltage::Voltage(string name, Node *node_p, Node *node_n, double amplitude)
     _name = name;
     _node_p = node_p;
     _node_n = node_n;
-    _amplitude = amplitude;
+    _voltage_across = amplitude;
     if (contain_node("0"))
     {
         _is_grounded = true;
     }
 }
 
-double Voltage::get_voltage(double t, Node *node)
+double Voltage::get_voltage_across(double t, Node *node)
 {
     if (node == _node_p)
     {
-        return _amplitude;
+        return _voltage_across;
     }
     else if (node == _node_n)
     {
-        return -1.0 * _amplitude;
+        return -1.0 * _voltage_across;
     }
     else
     {
@@ -91,6 +123,16 @@ double Voltage::get_voltage(double t, Node *node)
     }
 }
 
+double Voltage::get_current_through(Node *node)
+{
+    return _current_through;
+}
+
+void Voltage::set_current_through(double current)
+{
+    _current_through = current;
+}
+
 SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias, double amplitude, double frequency)
 {
     assert(node_p != node_n);
@@ -99,7 +141,7 @@ SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias,
     _node_p = node_p;
     _node_n = node_n;
     _bias = bias;
-    _amplitude = amplitude;
+    _voltage_across = amplitude;
     _frequency = frequency;
     if (contain_node("0"))
     {
@@ -107,10 +149,10 @@ SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias,
     }
 }
 
-double SINE_Voltage::get_voltage(double t, Node *node)
+double SINE_Voltage::get_voltage_across(double t, Node *node)
 {
-
-    double result = _bias + _amplitude * sin(_frequency * t);
+    _time += t;
+    double result = _bias + _voltage_across * sin(_frequency * _time);
     if (node == _node_p)
     {
         return result;
@@ -129,6 +171,16 @@ double SINE_Voltage::get_voltage(double t, Node *node)
     return result;
 }
 
+double SINE_Voltage::get_current_through(Node *node)
+{
+    return _current_through;
+}
+
+void SINE_Voltage::set_current_through(double current)
+{
+    _current_through = current;
+}
+
 Current::Current(string name, Node *node_p, Node *node_n, double amplitude)
 {
     assert(node_p != node_n);
@@ -136,18 +188,18 @@ Current::Current(string name, Node *node_p, Node *node_n, double amplitude)
     _name = name;
     _node_p = node_p;
     _node_n = node_n;
-    _amplitude = amplitude;
+    _current_through = amplitude;
 }
 
-double Current::get_current(double t, Node *node)
+double Current::get_current(Node *node)
 {
     if (node == _node_p)
     {
-        return _amplitude;
+        return _current_through;
     }
     else if (node == _node_n)
     {
-        return -1.0 * _amplitude;
+        return -1.0 * _current_through;
     }
     else
     {
@@ -156,4 +208,9 @@ double Current::get_current(double t, Node *node)
         cerr << endl;
         exit(1);
     }
+}
+
+double Current::get_current_through(Node *node)
+{
+    return get_current(node);
 }

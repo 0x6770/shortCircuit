@@ -16,7 +16,7 @@ int main()
     string line;
 
     double f = 1000;
-    double t = 0.001;
+    double step = 0.001;
 
     vector<Component *> circuit;
     vector<Node *> nodes;
@@ -60,10 +60,10 @@ int main()
     cout << "==============================" << endl;
     cout << "✅ " << circuit.size() << " components in total" << endl;
     cout << "==============================" << endl;
-    cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage(t)" << setw(18) << "check_grounded()" << endl;
+    cout << setw(12) << "get_type()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage_across(t)" << setw(18) << "check_grounded()" << endl;
     for (auto it = circuit.begin(); it != circuit.end(); it++)
     {
-        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance(1000) << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current(t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage(t, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
+        cout << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_conductance() << setw(16) << (*it)->get_node("p") << setw(18) << (*it)->get_node("n") << setw(18) << (*it)->get_current((*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(step, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
     }
 
     cout << endl;
@@ -76,14 +76,14 @@ int main()
     {
         cout << setw(22) << (*it);
     }
-    cout << setw(20) << "voltage_state" << setw(10) << "b" << endl;
+    cout << setw(10) << "b" << endl;
     for (auto it = nodes.begin(); it != nodes.end(); it++)
     {
         cout << setw(5) << (*it)->get_name();
         for (auto jt = nodes.begin(); jt != nodes.end(); jt++)
         {
-            cout << setw(22) << (*it)->get_conductance(f, (*jt));
+            cout << setw(22) << (*it)->get_conductance((*jt));
         }
-        cout << setw(10) << (*it)->get_voltage_state() << setw(20) << (*it)->get_current(t) << endl;
+        cout << setw(20) << (*it)->get_current() << endl;
     }
 }

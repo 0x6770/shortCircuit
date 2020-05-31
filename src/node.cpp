@@ -16,7 +16,7 @@ void check_parallel_voltages(Node *node, Component *voltage, const vector<Compon
     }
 }
 
-Node::Node(const string name)
+Node::Node(string name)
 {
     _name = name;
 }
@@ -31,14 +31,14 @@ void Node::add_components(Component *component)
     _components.push_back(component);
 }
 
-double Node::get_conductance(const double f, Node *node)
+double Node::get_conductance(Node *node)
 {
     double result = 0.0;
     if (node->get_name() == _name)
     {
         for (auto it = _components.begin(); it != _components.end(); it++) // sum up the conductance of all components
         {
-            result += (*it)->get_conductance(f);
+            result += (*it)->get_conductance();
         }
     }
     else
@@ -47,7 +47,7 @@ double Node::get_conductance(const double f, Node *node)
         {
             if ((*it)->contain_node(node->get_name()))
             {
-                result -= (*it)->get_conductance(f);
+                result -= (*it)->get_conductance();
             }
         }
     }
@@ -59,22 +59,40 @@ string Node::get_name()
     return _name;
 }
 
-double Node::get_voltage(const double t)
+double Node::get_node_voltage()
 {
     return _node_voltage;
 }
 
-double Node::get_current(const double t)
+void Node::set_node_voltage(double voltage)
+{
+    _node_voltage = voltage;
+}
+
+double Node::get_current()
 {
     double result = 0.0;
     for (auto it = _components.begin(); it != _components.end(); it++)
     {
-        if ((*it)->get_type() == "I")
+        if ((*it)->get_type() == "I" or (*it)->get_type() == "L")
         {
-            result += (*it)->get_current(t, this);
+            result += (*it)->get_current(this);
         }
     }
     return result;
+}
+
+double Node::get_current_through(double t, Component *comp)
+{
+    double res = 0.0;
+    for (auto it = _components.begin(); it != _components.end(); it++)
+    {
+        if ((*it) != comp)
+        {
+            res += (*it)->get_current_through(this);
+        }
+    }
+    return res;
 }
 
 ostream &operator<<(ostream &os, Node &node)

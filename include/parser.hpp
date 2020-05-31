@@ -20,6 +20,8 @@ parse_number(string input);
  */
 Component *parse_component(string input, vector<Node *> &nodes);
 
+vector<double> parse_tran(string tran);
+
 /**
  * @brief generate instants from given directive
  * 

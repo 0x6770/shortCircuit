@@ -146,7 +146,27 @@ Component *parse_component(string input, vector<Node *> &nodes)
         real_node_n->add_components(result);
         return result;
     }
+    cerr << endl;
+    cerr << "🚧  ERROR: unsupported component type" << endl;
+    cerr << endl;
+    exit(1);
 };
+
+vector<double> parse_tran(string tran)
+{
+    istringstream iss(tran);
+    string tag, start, end, placeholder, step;
+    if (!(iss >> tag >> start >> end >> placeholder >> step))
+    {
+        cerr << "unknown format for component" << endl;
+        cerr << " => " << tran << endl;
+        exit(1);
+    }
+    double real_end = parse_number(end);
+    double real_step = parse_number(step);
+    vector<double> result = {real_step, real_end};
+    return result;
+}
 
 //* tested and Done
 vector<double> generate_instants(string directive)

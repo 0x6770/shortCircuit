@@ -13,6 +13,10 @@ class Inductor : public Component
 {
 public:
     Inductor(string name, Node *node_p, Node *node_n, double property);
+
+    double get_current_through(Node *node);
+
+    double get_current(Node *node);
 };
 
 /** 
@@ -24,9 +28,9 @@ class Capacitor : public Component
 public:
     Capacitor(string name, Node *node_p, Node *node_n, double property);
 
-    double update_voltage(double t, double current, Node *node);
+    double get_voltage_across(double t, Node *node);
 
-    double get_voltage(double t, Node *node);
+    void set_voltage_across(double t);
 };
 
 /** 
@@ -38,7 +42,9 @@ class Resistor : public Component
 public:
     Resistor(string name, Node *node_p, Node *node_n, double property);
 
-    double get_conductance(double f);
+    double get_conductance();
+
+    double get_current_through(Node *node);
 };
 
 /** 
@@ -50,7 +56,11 @@ class Voltage : public Component
 public:
     Voltage(string name, Node *node_p, Node *node_n, double amplitude);
 
-    double get_voltage(double t, Node *node);
+    double get_voltage_across(double t, Node *node);
+
+    double get_current_through(Node *node);
+
+    void set_current_through(double current);
 };
 
 /** 
@@ -59,10 +69,17 @@ public:
  */
 class SINE_Voltage : public Component
 {
+private:
+    double _time;
+
 public:
     SINE_Voltage(string name, Node *node_p, Node *node_n, double bias, double amplitude, double frequency);
 
-    double get_voltage(double t, Node *node);
+    double get_voltage_across(double t, Node *node);
+
+    double get_current_through(Node *node);
+
+    void set_current_through(double current);
 };
 
 /** 
@@ -74,7 +91,9 @@ class Current : public Component
 public:
     Current(string name, Node *node_p, Node *node_n, double amplitude);
 
-    double get_current(double t, Node *node);
+    double get_current_through(Node *node);
+
+    double get_current(Node *node);
 };
 
 #endif

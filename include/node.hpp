@@ -20,10 +20,6 @@ private:
     string _name;
     double _node_voltage;
     vector<Component *> _components;
-    vector<Component *> _voltages;
-    vector<Component *> _currents;
-    bool _contain_voltage = false;
-    bool _contain_current = false;
 
 public:
     /**
@@ -46,7 +42,7 @@ public:
      * @return complex<double> conductance between current node and another node if another node is provided
      *                         total conductance related to the current node     if the current node is provided
      */
-    double get_conductance(const double f, Node *node);
+    double get_conductance(Node *node);
 
     /**
      * @brief Get the components of the current node
@@ -75,7 +71,7 @@ public:
      * @param t the required time instant
      * @return double the nodal voltage value from previous instant
      */
-    double get_voltage(const double t);
+    double get_node_voltage();
 
     /**
      * @brief Get the currrent of the current node
@@ -83,7 +79,17 @@ public:
      * @param t the required time instant
      * @return double the current value at the required instant
      */
-    double get_current(const double t);
+    double get_current();
+
+    /**
+     * @brief Get the current flow into the current node of the given component
+     * 
+     * @param comp 
+     * @return double 
+     */
+    double get_current_through(double t, Component *comp);
+
+    void set_node_voltage(double voltage);
 
     /**
      * @brief check whether a component is voltage source or current source

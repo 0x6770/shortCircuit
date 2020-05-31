@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     ifstream input_file(argv[1]);
     vector<Component *> components;
     vector<Node *> nodes;
-    vector<double> instants;
+    vector<double> time_params;
     string line;
 
     while (getline(input_file, line))
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
             if (is_tran(line))
             {
                 cerr << "⏱  Parsing directive: " << line << endl;
-                instants = generate_instants(line);
+                time_params = parse_tran(line);
             }
             else if (is_end(line))
             {
@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    Circuit *circuit = new Circuit(nodes, components, instants);
-    cout << *circuit << endl;
+    Circuit *circuit = new Circuit(nodes, components, time_params[0], time_params[1]);
+    cerr << *circuit << endl;
+    circuit->loop();
 }
