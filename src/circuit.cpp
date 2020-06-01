@@ -66,31 +66,30 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
                 _A(row, col) = -1.0;
                 _A(col, row) = -1.0;
             }
-            _b(row, 0) = (*voltage)->get_voltage_across(_step, (*voltage)->get_node("p"));
+            _b(row, 0) = (*voltage)->get_voltage_across(_time, (*voltage)->get_node("p"));
         }
     }
 }
 
-Eigen::VectorXd Circuit::solve()
+void Circuit::solve()
 {
     // solve x from x = A^{-1}·b
-    Eigen::VectorXd res = _A.inverse() * _b;
+    _x = _A.inverse() * _b;
 
     // update nodal voltages
     for (auto node = _nodes.begin() + 1; node != _nodes.end(); node++)
     {
         int row = node - _nodes.begin() - 1;
-        (*node)->set_node_voltage(res[row]);
+        (*node)->set_node_voltage(_x[row]);
     }
 
     // update current flow through voltage sources
     for (auto voltage = _voltages.begin(); voltage != _voltages.end(); voltage++)
     {
         int row = _nodes.size() + voltage - _voltages.begin() - 1;
-        (*voltage)->set_current_through(res[row]);
+        (*voltage)->set_current_through(_x[row]);
     }
 
-    // TODO discuss whether this should be seperated into two loops
     for (auto comp = _components.begin(); comp != _components.end(); comp++)
     {
         // update current flow through Inductors
@@ -98,7 +97,8 @@ Eigen::VectorXd Circuit::solve()
         {
             double pre_voltage = -(*comp)->get_node("p")->get_node_voltage() + (*comp)->get_node("n")->get_node_voltage();
             double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
-            double result = pre_current + (_step * pre_voltage) / (2.0 * (*comp)->get_property());
+            double result = pre_current + (_step * pre_voltage) / (*comp)->get_property(); // Forward Euler v(t+Δt)≈v(t)+(Δt·i(t))/C
+            // double result = pre_current + (_step * pre_voltage) / (2.0 * (*comp)->get_property()); // Trapezoid v(t+Δt)≈v(t)+(Δt·i(t))/(2C)
             // cout << "result: " << result << " pre_voltage: " << pre_voltage << " _step: " << _step << " pre_current: " << pre_current << " (*comp)->get_property(): " << (*comp)->get_property() << endl;
             (*comp)->set_current_through(result);
         }
@@ -108,15 +108,15 @@ Eigen::VectorXd Circuit::solve()
             // cerr << "here is a capacitor " << endl;
             double pre_voltage = (*comp)->get_voltage_across(_step, (*comp)->get_node("p"));
             double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
-            double result = pre_voltage + (_step * pre_current / (2.0 * (*comp)->get_property()));
+            double result = pre_voltage + (_step * pre_current / (*comp)->get_property()); // Forawrd Euler i(t+Δt)≈i(t)+(Δt·v(t))/L
+            // double result = pre_voltage + (_step * pre_current / (2.0 * (*comp)->get_property()));  // Trapezoid i(t+Δt)≈i(t)+(Δt·v(t))/(2L)
             // cout << "pre_voltage: " << pre_voltage << "_step: " << _step << "pre_current: " << pre_current << "(*comp)->get_property()" << (*comp)->get_property() << endl;
             (*comp)->set_voltage_across(result);
         }
     }
-    return res;
 };
 
-void Circuit::update_b(double t)
+void Circuit::update_b()
 {
     for (auto it = _nodes.begin() + 1; it != _nodes.end(); it++)
     {
@@ -128,26 +128,45 @@ void Circuit::update_b(double t)
     {
         int row = _nodes.size() + voltage - _voltages.begin() - 1;
         // cout << "row: " << row << endl;
-        for (auto node = _nodes.begin() + 1; node != _nodes.end(); node++)
+        _b(row, 0) = (*voltage)->get_voltage_across(_time, (*voltage)->get_node("p"));
+    }
+}
+
+void Circuit::print_table_title()
+{
+    cout << "time"
+         << "\t";
+    for (auto node = _nodes.begin() + 1; node != _nodes.end(); node++)
+    {
+        cout << "V(" << (*node)->get_name() << ")\t";
+    }
+    for (auto voltage = _voltages.begin(); voltage != _voltages.end(); voltage++)
+    {
+        cout << "I(" << (*voltage)->get_name() << ")\t";
+    }
+    for (auto component = _components.begin(); component != _components.end(); component++)
+    {
+        if ((*component)->get_type() != "C" or (*component)->get_type() != "V")
         {
-            int col = node - _nodes.begin() - 1;
-            // cout << "row: " << row << "col: " << col << endl;
-            _b(row, 0) = (*voltage)->get_voltage_across(_step, (*voltage)->get_node("p"));
+            cout << "I(" << (*component)->get_name() << ")\t";
         }
     }
+    cout << endl;
 }
 
 void Circuit::print()
 {
-    // cout << setw(12) << "get_name()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current_through(t)" << setw(18) << "get_voltage_across(t)" << endl;
-    // for (auto it = _components.begin(); it != _components.end(); it++)
-    // {
-    //     cout << setw(12) << (*it)->get_name() << setw(20) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current_through(_t, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(_t, (*it)->get_node("p")) << endl;
-    // }
-    Eigen::VectorXd res = _A.inverse() * _b;
-    for (int i = 0; i < res.rows(); i++)
+    cout << _time << "\t";
+    for (int i = 0; i < _x.rows(); i++)
     {
-        cout << res[i] << ", ";
+        cout << _x[i] << "\t";
+    }
+    for (auto component = _components.begin(); component != _components.end(); component++)
+    {
+        if ((*component)->get_type() != "C" or (*component)->get_type() != "V")
+        {
+            cout << (*component)->get_current_through((*component)->get_node("p")) << "\t";
+        }
     }
     cout << endl;
 }
@@ -205,12 +224,13 @@ ostream &operator<<(ostream &os, Circuit &circuit)
 
 void Circuit::loop()
 {
-    int steps = _end / _step;
-    for (int i = 0; i < steps; i++)
+    print_table_title();
+    while (_time <= _end)
     {
         // cerr << *this << endl;
-        print();
         solve();
-        update_b(_step);
+        print();
+        _time += _step;
+        update_b();
     }
 }

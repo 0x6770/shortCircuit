@@ -151,8 +151,7 @@ SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias,
 
 double SINE_Voltage::get_voltage_across(double t, Node *node)
 {
-    _time += t;
-    double result = _bias + _voltage_across * sin(_frequency * _time);
+    double result = _bias + _voltage_across * sin(2 * M_PI * _frequency * t);
     if (node == _node_p)
     {
         return result;

@@ -42,5 +42,5 @@ int main()
 
     Circuit *circuit = new Circuit(nodes, components, time_params[0], time_params[1]);
     // cout << *circuit << endl;
-    circuit->print();
+    circuit->loop();
 }

@@ -53,7 +53,7 @@ test: clean  $(SRC)/*.cpp ./$(TEST)/$(test_target).cpp
 output: clean $(BIN)/$(EXECUTABLE)
 	clear
 	@echo "🚀 Generating output file..."
-	./$(BIN)/$(EXECUTABLE) ./input/$(net).net > output
+	./$(BIN)/$(EXECUTABLE) ./input/$(net).net > simdata.txt
 
 clean:
 	@echo "🧹 Clearing..."
