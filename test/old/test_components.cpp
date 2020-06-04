@@ -1,5 +1,5 @@
 #include "parser.hpp"
-#include "components.hpp"
+#include "linear_components.hpp"
 #include "circuit.hpp"
 
 #include <iostream>
@@ -33,6 +33,7 @@ int main()
     Component *R = new Resistor("R", a, b, f);
     Component *C = new Capacitor("C", d, e, f);
     Component *L = new Inductor("L", a, d, f);
+    Component *D = new Diode_D("D", a, d);
 
     // test get_conductance for every kind of component
     cout << "🧪 Testing member function" << endl;
@@ -44,4 +45,5 @@ int main()
     cout << setw(12) << R->get_type() << setw(20) << R->get_conductance() << setw(16) << R->get_node("p")->get_name() << setw(18) << R->get_node("n")->get_name() << setw(18) << R->get_current(R->get_node("p")) << setw(18) << R->get_voltage_across(t, R->get_node("p")) << setw(18) << R->check_grounded() << endl;
     cout << setw(12) << C->get_type() << setw(20) << C->get_conductance() << setw(16) << C->get_node("p")->get_name() << setw(18) << C->get_node("n")->get_name() << setw(18) << C->get_current(C->get_node("p")) << setw(18) << C->get_voltage_across(t, C->get_node("p")) << setw(18) << C->check_grounded() << endl;
     cout << setw(12) << L->get_type() << setw(20) << L->get_conductance() << setw(16) << L->get_node("p")->get_name() << setw(18) << L->get_node("n")->get_name() << setw(18) << L->get_current(L->get_node("p")) << setw(18) << L->get_voltage_across(t, L->get_node("p")) << setw(18) << L->check_grounded() << endl;
+    cout << setw(12) << D->get_type() << setw(20) << D->get_conductance() << setw(16) << D->get_node("p")->get_name() << setw(18) << D->get_node("n")->get_name() << setw(18) << D->get_current(D->get_node("p")) << setw(18) << D->get_voltage_across(t, D->get_node("p")) << setw(18) << D->check_grounded() << endl;
 };

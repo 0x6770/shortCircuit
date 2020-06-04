@@ -1,4 +1,4 @@
-#include "component.hpp"
+#include "../include/component.hpp"
 
 Node *Component::get_node(string x)
 {
@@ -13,11 +13,6 @@ bool Component::contain_node(string node)
         return true;
     }
     return false;
-}
-
-bool Component::check_grounded()
-{
-    return _is_grounded;
 }
 
 string Component::get_name()

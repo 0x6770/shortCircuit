@@ -1,6 +1,7 @@
-#include "parser.hpp"
-#include "components.hpp"
-#include "circuit.hpp"
+#include "./include/parser.hpp"
+#include "./include/linear_components.hpp"
+#include "./include/nonlinear_components.hpp"
+#include "./include/circuit.hpp"
 
 #include <fstream>
 
@@ -8,7 +9,6 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    // ifstream input_file("./input/test_input.net");
     if (argc < 2)
     {
         cerr << endl;
@@ -49,6 +49,6 @@ int main(int argc, char *argv[])
     }
 
     Circuit *circuit = new Circuit(nodes, components, time_params[0], time_params[1]);
-    cerr << *circuit << endl;
+    // cerr << *circuit << endl;
     circuit->loop();
 }

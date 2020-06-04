@@ -1,0 +1,7 @@
+* test Inductor model with sin voltage
+R1 N001 N002 1k
+V1 N001 0 SINE(0 10 1k)
+L1 N002 0 100m
+.tran 0 5m 0 1u
+.backanno
+.end

@@ -1,4 +1,4 @@
-#include "parser.hpp"
+#include "../include/parser.hpp"
 
 //* tested and Done
 double parse_number(string input)
@@ -62,12 +62,11 @@ double parse_number(string input)
 };
 
 //* tested for R,C,L
-//! TODO V and I
 Component *parse_component(string input, vector<Node *> &nodes)
 {
     stringstream ss;
     ss << input;
-    string name, node_p, node_n, property, voltage_type, bias, amplitude, frequency, buffer1, buffer2, buffer3;
+    string name, node_p, node_n, property, model_name, voltage_type, bias, amplitude, frequency, buffer1, buffer2, buffer3;
     double real_property, real_bias, real_amplitude, real_frequency;
     if (input[0] == 'R')
     {
@@ -105,12 +104,33 @@ Component *parse_component(string input, vector<Node *> &nodes)
         real_node_n->add_components(result);
         return result;
     }
+    else if (input[0] == 'D')
+    {
+        ss >> name >> node_p >> node_n >> model_name;
+        Node *real_node_p = get_or_create_node(nodes, node_p);
+        Node *real_node_n = get_or_create_node(nodes, node_n);
+        // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tmodal_name: " << modal_name << endl;
+        Component *result = nullptr;
+        if (model_name == "D")
+        {
+            Component *result = new Diode_D(name, real_node_p, real_node_n);
+            real_node_p->add_components(result);
+            real_node_n->add_components(result);
+            return result;
+        }
+        else
+        {
+            cerr << endl;
+            cerr << "🚧  ERROR: unsupported modal_name for Diode " << model_name << endl;
+            cerr << endl;
+            exit(1);
+        }
+    }
     else if (input[0] == 'V')
     {
         if (ss >> name >> node_p >> node_n >> buffer1 >> buffer2 >> buffer3)
         {
             // cerr << "SINE " << name << " " << node_p << " " << node_n << " " << buffer1 << " " << buffer2 << " " << buffer3 << endl;
-            // cout << "buffer1.substr(5)" << buffer1.substr(5) << endl;
             real_bias = parse_number(buffer1.substr(5));
             real_amplitude = parse_number(buffer2);
             // cout << "buffer3.substr(0, (buffer3.size() - 1))" << buffer3.substr(0, (buffer3.size() - 1)) << endl;

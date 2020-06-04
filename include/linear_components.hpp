@@ -1,5 +1,5 @@
-#ifndef components_hpp
-#define components_hpp
+#ifndef linear_components_hpp
+#define linear_components_hpp
 
 #include "component.hpp"
 
@@ -30,7 +30,7 @@ public:
 
     double get_voltage_across(double t, Node *node);
 
-    void set_voltage_across(double t);
+    void set_voltage_across(double voltage);
 };
 
 /** 
@@ -70,6 +70,8 @@ public:
 class SINE_Voltage : public Component
 {
 private:
+    double _bias = 0.0;
+    double _frequency = 0.0;
     double _time;
 
 public:

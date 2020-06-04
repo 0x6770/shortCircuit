@@ -1,7 +1,8 @@
 #ifndef parser_hpp
 #define parser_hpp
 
-#include "components.hpp"
+#include "linear_components.hpp"
+#include "nonlinear_components.hpp"
 
 /**
  * @brief parser text based number to double

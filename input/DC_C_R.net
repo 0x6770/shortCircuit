@@ -1,3 +1,4 @@
+* test Capacitor model with DC voltage
 C1 N002 0 1µ
 R1 N001 N002 1k
 V1 N001 0 10

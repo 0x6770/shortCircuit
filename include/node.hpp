@@ -99,10 +99,32 @@ public:
     friend ostream &operator<<(ostream &os, Node &node);
 };
 
+/**
+ * @brief Output the basic information of a node
+ * 
+ * @param os 
+ * @param node 
+ * @return ostream& 
+ */
 ostream &operator<<(ostream &os, Node &node);
 
+/**
+ * @brief Compare two nodes by name
+ * 
+ * @param node_a 
+ * @param node_b 
+ * @return true if the name of the first node is less than the second (compare strings)
+ * @return false if the name of the first node is larger than the second (compare strings)
+ */
 bool compare_node(Node *node_a, Node *node_b);
 
+/**
+ * @brief Check whether a specific node has already been stored in nodes, add the node into nodes if not yet been stored
+ * 
+ * @param nodes a list of nodes
+ * @param node name of a specific node
+ * @return Node* 
+ */
 Node *get_or_create_node(vector<Node *> &nodes, const string &node);
 
 #endif

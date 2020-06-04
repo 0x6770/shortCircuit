@@ -1,4 +1,4 @@
-#include "components.hpp"
+#include "../include/component.hpp"
 
 void check_parallel_voltages(Node *node, Component *voltage, const vector<Component *> &voltages)
 {
@@ -74,7 +74,7 @@ double Node::get_current()
     double result = 0.0;
     for (auto it = _components.begin(); it != _components.end(); it++)
     {
-        if ((*it)->get_type() == "I" or (*it)->get_type() == "L")
+        if ((*it)->get_type() == "I" or (*it)->get_type() == "L" or (*it)->get_type() == "D")
         {
             result += (*it)->get_current(this);
         }

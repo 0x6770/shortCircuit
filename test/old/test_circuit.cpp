@@ -1,5 +1,6 @@
 #include "parser.hpp"
-#include "components.hpp"
+#include "linear_components.hpp"
+#include "nonlinear_components.hpp"
 #include "circuit.hpp"
 
 #include <fstream>

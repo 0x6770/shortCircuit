@@ -1,4 +1,46 @@
-#include "circuit.hpp"
+#include "../include/circuit.hpp"
+
+bool Circuit::check_parallel_voltages(vector<Component *> components)
+{
+    bool result = false;
+    for (auto component = components.begin(); component != components.end(); component++)
+    {
+        if ((*component)->get_type() == "V")
+        {
+            Component *voltage = (*component);
+            Node *positive = voltage->get_node("p");
+            Node *negative = voltage->get_node("n");
+            vector<Component *> p_components = positive->get_components();
+            for (auto p_component = p_components.begin(); p_component != p_components.end(); p_component++)
+            {
+                Component *another_voltage = (*p_component);
+                if ((another_voltage != voltage) and another_voltage->contain_node(negative->get_name()))
+                {
+                    cerr << "🚧 ERROR: " << voltage->get_name() << " and " << another_voltage->get_name() << " are paralleled voltage sources" << endl;
+                    result = true;
+                    goto end_of_outer_loop;
+                }
+            }
+        }
+    }
+end_of_outer_loop:
+    return result;
+}
+
+void Circuit::update_A()
+{
+    for (auto it = _nodes.begin() + 1; it != _nodes.end(); it++)
+    {
+        int row = it - _nodes.begin() - 1;
+        // cout << *(*it) << " row: " << row << endl;
+        for (auto jt = _nodes.begin() + 1; jt != _nodes.end(); jt++)
+        {
+            int col = jt - _nodes.begin() - 1;
+            // cout << *(*jt) << " row: " << row << " col: " << col << endl;
+            _A(row, col) = (*it)->get_conductance(*jt);
+        }
+    }
+}
 
 Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double step, double end)
 {
@@ -6,7 +48,17 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
     _nodes = nodes;
     _step = step;
     _end = end;
-    // find out all the voltage sources in the components
+
+    // Check whether paralleled voltage sources exist
+    if (check_parallel_voltages(_components))
+    {
+        cerr << endl;
+        cerr << "🚧 ERROR: paralleled voltage sources present" << endl;
+        cerr << endl;
+        exit(1);
+    }
+
+    // find out all the voltage sources (Voltage sources, Capacitors, Diodes) in the components
     for (auto component = _components.begin(); component != _components.end(); component++)
     {
         // treat Capacitors as Voltage sources
@@ -71,7 +123,7 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
     }
 }
 
-void Circuit::solve()
+void Circuit::solve_matrix()
 {
     // solve x from x = A^{-1}·b
     _x = _A.inverse() * _b;
@@ -95,26 +147,83 @@ void Circuit::solve()
         // update current flow through Inductors
         if ((*comp)->get_type() == "L")
         {
-            double pre_voltage = -(*comp)->get_node("p")->get_node_voltage() + (*comp)->get_node("n")->get_node_voltage();
+            double pre_voltage = (*comp)->get_node("p")->get_node_voltage() - (*comp)->get_node("n")->get_node_voltage();
             double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
-            double result = pre_current + (_step * pre_voltage) / (*comp)->get_property(); // Forward Euler v(t+Δt)≈v(t)+(Δt·i(t))/C
+            double result = pre_current - (_step * pre_voltage) / (*comp)->get_property(); // Forward Euler v(t+Δt)≈v(t)+(Δt·i(t))/C
             // double result = pre_current + (_step * pre_voltage) / (2.0 * (*comp)->get_property()); // Trapezoid v(t+Δt)≈v(t)+(Δt·i(t))/(2C)
-            // cout << "result: " << result << " pre_voltage: " << pre_voltage << " _step: " << _step << " pre_current: " << pre_current << " (*comp)->get_property(): " << (*comp)->get_property() << endl;
             (*comp)->set_current_through(result);
         }
         // update voltage across Capacitor
         else if ((*comp)->get_type() == "C")
         {
-            // cerr << "here is a capacitor " << endl;
             double pre_voltage = (*comp)->get_voltage_across(_step, (*comp)->get_node("p"));
             double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
             double result = pre_voltage + (_step * pre_current / (*comp)->get_property()); // Forawrd Euler i(t+Δt)≈i(t)+(Δt·v(t))/L
             // double result = pre_voltage + (_step * pre_current / (2.0 * (*comp)->get_property()));  // Trapezoid i(t+Δt)≈i(t)+(Δt·v(t))/(2L)
-            // cout << "pre_voltage: " << pre_voltage << "_step: " << _step << "pre_current: " << pre_current << "(*comp)->get_property()" << (*comp)->get_property() << endl;
             (*comp)->set_voltage_across(result);
         }
     }
 };
+
+void Circuit::process_nonlinear_components()
+{
+    double theshold = 1.0e-8;
+    double I_s = 1.0e-12;
+    double V_t = 0.02585;
+    int num_nonlinear = 0;
+    for (auto component = _components.begin(); component != _components.end(); component++)
+    {
+        if ((*component)->get_type() == "D")
+        {
+            num_nonlinear++;
+        }
+    }
+    // cerr << "Found " << num_nonlinear << " nonlinear components in total" << endl;
+    while (num_nonlinear > 0)
+    // for (int i = 0; i < 5; i++)
+    {
+        _x = _A.inverse() * _b;
+        // cerr << "_A " << endl
+        //      << _A << endl;
+        // cerr << "_b " << endl
+        //      << _b << endl;
+        // cerr << "_x " << endl
+        //      << _x << endl;
+        for (auto component = _components.begin() + 1; component != _components.end(); component++)
+        {
+            if ((*component)->get_type() == "D")
+            {
+                // cerr << "Found Diode: " << (*component)->get_name() << endl;
+                int row = component - _components.begin() + 1;
+                double positive = 0.0;
+                if ((*component)->get_node("p")->get_name() != "0")
+                {
+                    positive = _x(find(_nodes.begin(), _nodes.end(), (*component)->get_node("p")) - _nodes.begin() - 1);
+                }
+                cerr << "positive: " << positive << endl;
+                double negative = 0.0;
+                if ((*component)->get_node("n")->get_name() != "0")
+                {
+                    negative = _x(find(_nodes.begin(), _nodes.end(), (*component)->get_node("n")) - _nodes.begin() - 1);
+                }
+                double pd = positive - negative;
+                double old_current = (*component)->get_current_through((*component)->get_node("p"));
+                double new_current = I_s * (exp(pd / V_t) - 1);
+                // cerr << "Voltage across Diode is " << pd << endl;
+                // cerr << "R_d: " << (*component)->get_conductance() << endl;
+                // cerr << "old_current: " << old_current << endl;
+                // cerr << "new_current: " << new_current << endl;
+                if (abs(new_current - old_current) < theshold)
+                {
+                    num_nonlinear--;
+                }
+                (*component)->set_current_through(new_current);
+            }
+        }
+        update_A();
+        update_b();
+    }
+}
 
 void Circuit::update_b()
 {
@@ -146,7 +255,7 @@ void Circuit::print_table_title()
     }
     for (auto component = _components.begin(); component != _components.end(); component++)
     {
-        if ((*component)->get_type() != "C" or (*component)->get_type() != "V")
+        if ((*component)->get_type() != "C" and (*component)->get_type() != "V")
         {
             cout << "I(" << (*component)->get_name() << ")\t";
         }
@@ -163,7 +272,7 @@ void Circuit::print()
     }
     for (auto component = _components.begin(); component != _components.end(); component++)
     {
-        if ((*component)->get_type() != "C" or (*component)->get_type() != "V")
+        if ((*component)->get_type() != "C" and (*component)->get_type() != "V")
         {
             cout << (*component)->get_current_through((*component)->get_node("p")) << "\t";
         }
@@ -173,37 +282,23 @@ void Circuit::print()
 
 ostream &operator<<(ostream &os, Circuit &circuit)
 {
-    // os << endl;
-    // os << endl;
-    // os << "==================================================" << endl;
-    // os << "✅ " << circuit._end / circuit._step << " instants in total" << endl;
-    // os << "==================================================" << endl;
-    // os << "From " << 0 << " to " << circuit._end << ", with step: " << circuit._step << endl;
+    os << endl;
+    os << endl;
+    os << "==================================================" << endl;
+    os << "✅ " << circuit._end / circuit._step << " instants in total" << endl;
+    os << "==================================================" << endl;
+    os << "From " << 0 << " to " << circuit._end << ", with step: " << circuit._step << endl;
 
-    // os << endl;
-    // os << endl;
-    // os << "==================================================" << endl;
-    // os << "✅ " << circuit._components.size() << " components in total" << endl;
-    // os << "==================================================" << endl;
-    // os << setw(12) << "get_type()" << setw(20) << "get_property()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage_across(t)" << setw(18) << "check_grounded()" << endl;
-    // for (auto it = circuit._components.begin(); it != circuit._components.end(); it++)
-    // {
-    //     os << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_property() << setw(20) << (*it)->get_conductance() << setw(16) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current(circuit._step, (*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(circuit._step, (*it)->get_node("p")) << setw(18) << (*it)->check_grounded() << endl;
-    // }
-
-    // os << endl;
-    // os << endl;
-    // os << "==================================================" << endl;
-    // os << "✅ " << circuit._nodes.size() - 1 << " nodes in total except ground" << endl;
-    // os << "==================================================" << endl;
-    // os << setw(20) << "Node Names:" << setw(20) << "get_current:" << endl;
-    // for (auto it = circuit._nodes.begin(); it != circuit._nodes.end(); it++)
-    // {
-    //     if ((*it)->get_name() != "0")
-    //     {
-    //         os << setw(20) << (*it)->get_name() << setw(20) << (*it)->get_current(circuit._step) << endl;
-    //     }
-    // }
+    os << endl;
+    os << endl;
+    os << "==================================================" << endl;
+    os << "✅ " << circuit._components.size() << " components in total" << endl;
+    os << "==================================================" << endl;
+    os << setw(12) << "get_type()" << setw(20) << "get_property()" << setw(20) << "get_conductance()" << setw(16) << "get_node(\"p\")" << setw(18) << "get_node(\"n\")" << setw(18) << "get_current(t)" << setw(18) << "get_voltage_across(t)" << endl;
+    for (auto it = circuit._components.begin(); it != circuit._components.end(); it++)
+    {
+        os << setw(12) << (*it)->get_type() << setw(20) << (*it)->get_property() << setw(20) << (*it)->get_conductance() << setw(16) << (*it)->get_node("p")->get_name() << setw(18) << (*it)->get_node("n")->get_name() << setw(18) << (*it)->get_current((*it)->get_node("p")) << setw(18) << (*it)->get_voltage_across(circuit._step, (*it)->get_node("p")) << setw(18) << endl;
+    }
 
     os << endl;
     os << endl;
@@ -228,7 +323,8 @@ void Circuit::loop()
     while (_time <= _end)
     {
         // cerr << *this << endl;
-        solve();
+        // process_nonlinear_components(); // using Newton Raphson method to find states of nonlinear component
+        solve_matrix();
         print();
         _time += _step;
         update_b();

@@ -1,7 +1,0 @@
-* C:\Users\44736\Desktop\check_circuit\Draft1.asc
-V1 N001 0 SINE(0 3 1k)
-R1 N002 0 100
-C1 N001 N002 1µ
-.tran 0 10ms 0 0.01ms
-.backanno
-.end

@@ -1,0 +1,9 @@
+* test diode model with sine voltage
+R1 N001 N002 1k
+V1 N001 0 SINE(0 10 1k)
+D1 N002 0 D
+.model D D
+.lib /Users/ouikujie/Library/Application Support/LTspice/lib/cmp/standard.dio
+.tran 0 4m 0 1u
+.backanno
+.end

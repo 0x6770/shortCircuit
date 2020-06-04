@@ -1,3 +1,4 @@
+* test Inductor model with DC voltage 
 R1 N001 N002 1k
 V1 N001 0 10
 L1 N002 0 100m

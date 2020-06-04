@@ -1,5 +1,5 @@
 #include "parser.hpp"
-#include "components.hpp"
+#include "linear_components.hpp"
 #include "circuit.hpp"
 
 #include <iostream>

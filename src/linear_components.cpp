@@ -1,4 +1,4 @@
-#include "components.hpp"
+#include "../include/linear_components.hpp"
 
 Inductor::Inductor(string name, Node *node_p, Node *node_n, double property)
 {
@@ -98,10 +98,6 @@ Voltage::Voltage(string name, Node *node_p, Node *node_n, double amplitude)
     _node_p = node_p;
     _node_n = node_n;
     _voltage_across = amplitude;
-    if (contain_node("0"))
-    {
-        _is_grounded = true;
-    }
 }
 
 double Voltage::get_voltage_across(double t, Node *node)
@@ -143,10 +139,6 @@ SINE_Voltage::SINE_Voltage(string name, Node *node_p, Node *node_n, double bias,
     _bias = bias;
     _voltage_across = amplitude;
     _frequency = frequency;
-    if (contain_node("0"))
-    {
-        _is_grounded = true;
-    }
 }
 
 double SINE_Voltage::get_voltage_across(double t, Node *node)

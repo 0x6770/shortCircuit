@@ -1,3 +1,4 @@
+* test sin voltage generator
 R1 N002 N001 1
 R2 N003 N002 2
 R3 0 N002 8
