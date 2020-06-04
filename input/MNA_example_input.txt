@@ -1,0 +1,11 @@
+* C:\Users\44736\Desktop\report_circuit\MNA_example.asc
+R1 N002 N001 3
+R2 N004 N003 5
+R3 0 N001 2
+R4 N001 N004 7
+R5 N004 0 4
+V1 N003 N002 10
+V2 N001 0 5
+.tran 0 0.01 0 0.00001
+.backanno
+.end
