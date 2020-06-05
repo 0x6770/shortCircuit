@@ -13,8 +13,9 @@ class Diode : public Component
 {
 protected:
     string _model; // model of diode
-    double _I_s; // saturation current
-    double _V_t; // thermal voltage
+    double _I_s;   // saturation current
+    double _V_t;   // thermal voltage
+    // double _cached_current_through; // current value cached from previos instant to speed up solving new diode current
 };
 
 /**
@@ -27,6 +28,8 @@ public:
     Diode_D(string name, Node *node_p, Node *node_n);
 
     double get_conductance();
+
+    double get_current(Node *node);
 
     double get_current_through(Node *node);
 

@@ -167,28 +167,29 @@ void Circuit::solve_matrix()
 
 void Circuit::process_nonlinear_components()
 {
-    double theshold = 1.0e-8;
+    double theshold = 1.0e-2;
     double I_s = 1.0e-12;
     double V_t = 0.02585;
     int num_nonlinear = 0;
+    vector<Component *> diodes;
     for (auto component = _components.begin(); component != _components.end(); component++)
     {
         if ((*component)->get_type() == "D")
         {
-            num_nonlinear++;
+            diodes.push_back(*component);
         }
     }
     // cerr << "Found " << num_nonlinear << " nonlinear components in total" << endl;
-    while (num_nonlinear > 0)
+    while (diodes.size() > 0)
     // for (int i = 0; i < 5; i++)
     {
         _x = _A.inverse() * _b;
-        // cerr << "_A " << endl
-        //      << _A << endl;
-        // cerr << "_b " << endl
-        //      << _b << endl;
-        // cerr << "_x " << endl
-        //      << _x << endl;
+        cout << "_A " << endl
+             << _A << endl
+             << "_b " << endl
+             << _b << endl
+             << "_x " << endl
+             << _x << endl;
         for (auto component = _components.begin() + 1; component != _components.end(); component++)
         {
             if ((*component)->get_type() == "D")
@@ -200,7 +201,6 @@ void Circuit::process_nonlinear_components()
                 {
                     positive = _x(find(_nodes.begin(), _nodes.end(), (*component)->get_node("p")) - _nodes.begin() - 1);
                 }
-                cerr << "positive: " << positive << endl;
                 double negative = 0.0;
                 if ((*component)->get_node("n")->get_name() != "0")
                 {
@@ -208,16 +208,27 @@ void Circuit::process_nonlinear_components()
                 }
                 double pd = positive - negative;
                 double old_current = (*component)->get_current_through((*component)->get_node("p"));
+                // double new_current = (*component)->get_conductance() * pd;
                 double new_current = I_s * (exp(pd / V_t) - 1);
-                // cerr << "Voltage across Diode is " << pd << endl;
-                // cerr << "R_d: " << (*component)->get_conductance() << endl;
-                // cerr << "old_current: " << old_current << endl;
-                // cerr << "new_current: " << new_current << endl;
-                if (abs(new_current - old_current) < theshold)
-                {
-                    num_nonlinear--;
-                }
+                // cerr << "positive: " << positive << endl;
+                // cout << "negative: " << negative << endl;
+                // cout << "Voltage across Diode is " << pd << endl;
+                // cout << "R_d: " << (*component)->get_conductance() << endl;
+                cout << "PD: " << pd << "\told_current: " << old_current << "\tnew_current: " << new_current << endl;
                 (*component)->set_current_through(new_current);
+                if (abs(new_current - old_current) < abs(new_current) * theshold or abs(new_current - old_current) < abs(old_current) * theshold or new_current == 0.0)
+                {
+                    // cout << "REACH theshold" << endl;
+                    for (auto diode = diodes.begin(); diode != diodes.end(); diode++)
+                    {
+                        int index = diode - diodes.begin();
+                        if (*diode == *component)
+                        {
+                            diodes.erase(diode);
+                            break; // avoid segmentation fault, only one diode is removed every time
+                        }
+                    };
+                }
             }
         }
         update_A();
@@ -323,7 +334,7 @@ void Circuit::loop()
     while (_time <= _end)
     {
         // cerr << *this << endl;
-        // process_nonlinear_components(); // using Newton Raphson method to find states of nonlinear component
+        process_nonlinear_components(); // using Newton Raphson method to find states of nonlinear component
         solve_matrix();
         print();
         _time += _step;

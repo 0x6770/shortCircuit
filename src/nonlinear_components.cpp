@@ -9,13 +9,20 @@ Diode_D::Diode_D(string name, Node *node_p, Node *node_n)
     _node_n = node_n;
     _I_s = 1.0e-12;            // saturation current
     _V_t = 0.02585;            // thermal curent
-    _current_through = 1.0e-3; // initial guess of current through the diode
+    _current_through = 1.0e-2; // initial guess of current through the diode
 };
 
 double Diode_D::get_conductance()
 {
-    double result = _V_t * log(abs(_current_through) / _I_s + 1.0);
+    double series_resistance = 0.001;
+    double result = abs(_current_through) / (_V_t * log(abs(_current_through) / _I_s + 1.0)) + 1.0 / series_resistance;
+    // cout << "DIODE CONDUCTANCE: " << result << " current: " << _current_through << endl;
     return result;
+}
+
+double Diode_D::get_current(Node *node)
+{
+    return get_current_through(node);
 }
 
 double Diode_D::get_current_through(Node *node)
