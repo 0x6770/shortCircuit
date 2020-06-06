@@ -56,7 +56,7 @@ public:
      * 
      * @param component 
      */
-    void add_components(Component *component);
+    void add_component(Component *component);
 
     /**
      * @brief Get the name of the current node
@@ -82,13 +82,11 @@ public:
     double get_current();
 
     /**
-     * @brief Get the current flow into the current node of the given component
+     * @brief Set the voltage of a given node
      * 
-     * @param comp 
+     * @param voltage
      * @return double 
      */
-    double get_current_through(double t, Component *comp);
-
     void set_node_voltage(double voltage);
 
     /**

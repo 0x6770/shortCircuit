@@ -1,6 +1,6 @@
 # Short Circuit
 
-A SPICE-like circuit simulator. 
+A SPICE-like circuit simulator.
 
 ### Features
 
@@ -22,8 +22,7 @@ Following commands generating makefile by `cmake` and then compiling the makefil
 
 ```bash
 git clone https://github.com/Ouikujie/shortCircuit
-cd shortCircuit && mkdir build && cd build
-cmake .. && make -j # -j flag allows multiple jobs been done at once
+make run
 ```
 
 An executable file will be produced at `./build/short_circuit`.

@@ -2,6 +2,8 @@
 #define component_hpp
 
 #include "node.hpp"
+#include "spdlog/spdlog.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 #include <algorithm>
 #include <iostream>

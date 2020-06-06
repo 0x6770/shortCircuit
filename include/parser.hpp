@@ -21,15 +21,13 @@ parse_number(string input);
  */
 Component *parse_component(string input, vector<Node *> &nodes);
 
-vector<double> parse_tran(string tran);
-
 /**
- * @brief generate instants from given directive
+ * @brief find timestep and end time from a given directive
  * 
  * @param directive .tran 0 <stop time> 0 <timestep>
- * @return vector<double> vector containing instants (0, <stop time>, <timestep>)
+ * @return vector<double> {timestep, end}
  */
-vector<double> generate_instants(string directive);
+vector<double> parse_tran(string tran);
 
 /**
  * @brief determine whether a given string is comment or not

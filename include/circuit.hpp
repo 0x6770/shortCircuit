@@ -3,8 +3,8 @@
 
 #include "parser.hpp"
 #include "component.hpp"
-#include "../Eigen/Core"
-#include "../Eigen/Dense"
+#include "eigen/Core"
+#include "eigen/Dense"
 
 using namespace std;
 
@@ -33,13 +33,11 @@ public:
     Circuit(vector<Node *> nodes, vector<Component *> components, double step, double end);
 
     /**
-     * @brief check whether paralleled voltages exist in the circuit
+     * @brief check whether paralleled voltages exist in the circuit, exit(1) if there are
      * 
      * @param components components needed to check
-     * @return true if paralleled voltages present
-     * @return false if paralleled voltages do not present
      */
-    bool check_parallel_voltages(vector<Component *> components);
+    void check_parallel_voltages(vector<Component *> components);
 
     /**
      * @brief update the b matrix in A·x = b

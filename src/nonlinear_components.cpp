@@ -1,4 +1,4 @@
-#include "../include/nonlinear_components.hpp"
+#include "nonlinear_components.hpp"
 
 Diode_D::Diode_D(string name, Node *node_p, Node *node_n)
 {

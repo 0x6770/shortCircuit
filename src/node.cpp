@@ -1,4 +1,4 @@
-#include "../include/component.hpp"
+#include "component.hpp"
 
 void check_parallel_voltages(Node *node, Component *voltage, const vector<Component *> &voltages)
 {
@@ -26,7 +26,7 @@ vector<Component *> Node::get_components()
     return _components;
 };
 
-void Node::add_components(Component *component)
+void Node::add_component(Component *component)
 {
     _components.push_back(component);
 }
@@ -80,19 +80,6 @@ double Node::get_current()
         }
     }
     return result;
-}
-
-double Node::get_current_through(double t, Component *comp)
-{
-    double res = 0.0;
-    for (auto it = _components.begin(); it != _components.end(); it++)
-    {
-        if ((*it) != comp)
-        {
-            res += (*it)->get_current_through(this);
-        }
-    }
-    return res;
 }
 
 ostream &operator<<(ostream &os, Node &node)

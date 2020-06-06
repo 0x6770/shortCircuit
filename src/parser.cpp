@@ -1,4 +1,4 @@
-#include "../include/parser.hpp"
+#include "parser.hpp"
 
 //* tested and Done
 double parse_number(string input)
@@ -23,7 +23,7 @@ double parse_number(string input)
     {
         result *= 1.0e-9;
     }
-    else if (multiplier == "µ" || multiplier == "u")
+    else if (multiplier == "\u03bc" or multiplier == "\u00b5" or multiplier == "u")
     {
         result *= 1.0e-6;
     }
@@ -31,19 +31,19 @@ double parse_number(string input)
     {
         result *= 1.0e-3;
     }
-    else if (multiplier == "k" || multiplier == "K")
+    else if (multiplier == "k" or multiplier == "K")
     {
         result *= 1.0e3;
     }
-    else if (multiplier == "meg" || multiplier == "Meg")
+    else if (multiplier == "meg" or multiplier == "Meg")
     {
         result *= 1.0e6;
     }
-    else if (multiplier == "g" || multiplier == "G")
+    else if (multiplier == "g" or multiplier == "G")
     {
         result *= 1.0e6;
     }
-    else if (multiplier == "t" || multiplier == "T")
+    else if (multiplier == "t" or multiplier == "T")
     {
         result *= 1.0e9;
     }
@@ -55,7 +55,7 @@ double parse_number(string input)
         cerr << endl;
         cerr << "🚧 ERROR: invalid syntax, cannot parse " << input << endl;
         cerr << endl;
-        exit(0);
+        exit(1);
     }
 
     return result;
@@ -76,8 +76,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
         Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tresistance: " << real_resistance << endl;
         Component *result = new Resistor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        real_node_p->add_component(result);
+        real_node_n->add_component(result);
         return result;
     }
     else if (input[0] == 'L')
@@ -88,8 +88,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
         Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tinductance: " << real_inductance << endl;
         Component *result = new Inductor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        real_node_p->add_component(result);
+        real_node_n->add_component(result);
         return result;
     }
     else if (input[0] == 'C')
@@ -100,8 +100,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
         Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
         Component *result = new Capacitor(name, real_node_p, real_node_n, real_property);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        real_node_p->add_component(result);
+        real_node_n->add_component(result);
         return result;
     }
     else if (input[0] == 'D')
@@ -114,8 +114,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
         if (model_name == "D")
         {
             Component *result = new Diode_D(name, real_node_p, real_node_n);
-            real_node_p->add_components(result);
-            real_node_n->add_components(result);
+            real_node_p->add_component(result);
+            real_node_n->add_component(result);
             return result;
         }
         else
@@ -138,8 +138,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
             Node *real_node_p = get_or_create_node(nodes, node_p);
             Node *real_node_n = get_or_create_node(nodes, node_n);
             Component *result = new SINE_Voltage(name, real_node_p, real_node_n, real_bias, real_amplitude, real_frequency);
-            real_node_p->add_components(result);
-            real_node_n->add_components(result);
+            real_node_p->add_component(result);
+            real_node_n->add_component(result);
             return result;
         }
         else
@@ -149,8 +149,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
             Node *real_node_p = get_or_create_node(nodes, node_p);
             Node *real_node_n = get_or_create_node(nodes, node_n);
             Component *result = new Voltage(name, real_node_p, real_node_n, real_amplitude);
-            real_node_p->add_components(result);
-            real_node_n->add_components(result);
+            real_node_p->add_component(result);
+            real_node_n->add_component(result);
             return result;
         }
     }
@@ -162,8 +162,8 @@ Component *parse_component(string input, vector<Node *> &nodes)
         Node *real_node_n = get_or_create_node(nodes, node_n);
         // cout << "type: " << input[0] << "\tname: " << name << "\tnode1: " << node1 << "\tnode2: " << node2 << "\tcapacitance: " << real_capacitance << endl;
         Component *result = new Current(name, real_node_p, real_node_n, real_amplitude);
-        real_node_p->add_components(result);
-        real_node_n->add_components(result);
+        real_node_p->add_component(result);
+        real_node_n->add_component(result);
         return result;
     }
     cerr << endl;
@@ -187,31 +187,6 @@ vector<double> parse_tran(string tran)
     vector<double> result = {real_step, real_end};
     return result;
 }
-
-//* tested and Done
-vector<double> generate_instants(string directive)
-{
-    vector<double> result;
-    istringstream iss(directive);
-    string tag, start, end, placeholder, step;
-    if (!(iss >> tag >> start >> end >> placeholder >> step))
-    {
-        cerr << "unknown format for component" << endl;
-        cerr << " => " << directive << endl;
-        exit(1);
-    }
-    // cout << "start: " << start << "\tend: " << end << "\tstep: " << step << endl;
-    // end.pop_back();  // delete the "s" at the end
-    // step.pop_back(); // delete the "s" at the end
-    double real_end = parse_number(end);
-    double real_step = parse_number(step);
-    // cout << "start: " << start << "\tend: " << real_end << "\tstep: " << real_step << endl;
-    for (double i = 0; i <= real_end; i += real_step)
-    {
-        result.push_back(i);
-    }
-    return result;
-};
 
 //* tested and Done
 bool is_comment(string input)

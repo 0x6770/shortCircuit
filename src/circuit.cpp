@@ -1,8 +1,7 @@
-#include "../include/circuit.hpp"
+#include "circuit.hpp"
 
-bool Circuit::check_parallel_voltages(vector<Component *> components)
+void Circuit::check_parallel_voltages(vector<Component *> components)
 {
-    bool result = false;
     for (auto component = components.begin(); component != components.end(); component++)
     {
         if ((*component)->get_type() == "V")
@@ -16,15 +15,12 @@ bool Circuit::check_parallel_voltages(vector<Component *> components)
                 Component *another_voltage = (*p_component);
                 if ((another_voltage != voltage) and another_voltage->contain_node(negative->get_name()))
                 {
-                    cerr << "🚧 ERROR: " << voltage->get_name() << " and " << another_voltage->get_name() << " are paralleled voltage sources" << endl;
-                    result = true;
-                    goto end_of_outer_loop;
+                    spdlog::error("🚧 ERROR: {} and {} are paralleled voltage sources", voltage->get_name(), another_voltage->get_name());
+                    exit(1);
                 }
             }
         }
     }
-end_of_outer_loop:
-    return result;
 }
 
 void Circuit::update_A()
@@ -50,13 +46,7 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
     _end = end;
 
     // Check whether paralleled voltage sources exist
-    if (check_parallel_voltages(_components))
-    {
-        cerr << endl;
-        cerr << "🚧 ERROR: paralleled voltage sources present" << endl;
-        cerr << endl;
-        exit(1);
-    }
+    check_parallel_voltages(_components);
 
     // find out all the voltage sources (Voltage sources, Capacitors, Diodes) in the components
     for (auto component = _components.begin(); component != _components.end(); component++)
@@ -76,9 +66,7 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
     // determine whether the current circuit has a ground
     if (_nodes[0]->get_name() != "0")
     {
-        cerr << endl;
-        cerr << "🚧  ERROR: missing GND" << endl;
-        cerr << endl;
+        spdlog::error("🚧  ERROR: missing GND");
         exit(1);
     }
 
@@ -184,17 +172,13 @@ void Circuit::process_nonlinear_components()
     // for (int i = 0; i < 5; i++)
     {
         _x = _A.inverse() * _b;
-        cout << "_A " << endl
-             << _A << endl
-             << "_b " << endl
-             << _b << endl
-             << "_x " << endl
-             << _x << endl;
+        // spdlog::debug("_A \n {} \n _b \n {} \n _x \n {}", _A, _b, _x);
         for (auto component = _components.begin() + 1; component != _components.end(); component++)
         {
             if ((*component)->get_type() == "D")
             {
                 // cerr << "Found Diode: " << (*component)->get_name() << endl;
+                spdlog::debug("Found Diode: {}", (*component)->get_name());
                 int row = component - _components.begin() + 1;
                 double positive = 0.0;
                 if ((*component)->get_node("p")->get_name() != "0")
@@ -214,7 +198,7 @@ void Circuit::process_nonlinear_components()
                 // cout << "negative: " << negative << endl;
                 // cout << "Voltage across Diode is " << pd << endl;
                 // cout << "R_d: " << (*component)->get_conductance() << endl;
-                cout << "PD: " << pd << "\told_current: " << old_current << "\tnew_current: " << new_current << endl;
+                spdlog::debug("PD: {}\told_current: {}\tnew_current: {}", pd, old_current, new_current);
                 (*component)->set_current_through(new_current);
                 if (abs(new_current - old_current) < abs(new_current) * theshold or abs(new_current - old_current) < abs(old_current) * theshold or new_current == 0.0)
                 {
@@ -333,7 +317,7 @@ void Circuit::loop()
     print_table_title();
     while (_time <= _end)
     {
-        // cerr << *this << endl;
+        spdlog::info("{}", _time);
         process_nonlinear_components(); // using Newton Raphson method to find states of nonlinear component
         solve_matrix();
         print();

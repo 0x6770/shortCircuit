@@ -1,4 +1,4 @@
-#include "../include/linear_components.hpp"
+#include "linear_components.hpp"
 
 Inductor::Inductor(string name, Node *node_p, Node *node_n, double property)
 {

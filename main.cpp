@@ -1,7 +1,7 @@
-#include "./include/parser.hpp"
-#include "./include/linear_components.hpp"
-#include "./include/nonlinear_components.hpp"
-#include "./include/circuit.hpp"
+#include "parser.hpp"
+#include "linear_components.hpp"
+#include "nonlinear_components.hpp"
+#include "circuit.hpp"
 
 #include <fstream>
 
@@ -11,12 +11,14 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        cerr << endl;
-        cerr << "🚧  ERROR: no input file provided as command line argument" << endl;
-        cerr << endl;
+        spdlog::error("🚧  ERROR: no input file provided as command line argument");
         exit(1);
     }
     ifstream input_file(argv[1]);
+
+    // Set global log level, available: debug, info, warn, error, critical
+    spdlog::set_level(spdlog::level::warn);
+
     vector<Component *> components;
     vector<Node *> nodes;
     vector<double> time_params;

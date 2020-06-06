@@ -1,4 +1,4 @@
-#include "../include/component.hpp"
+#include "component.hpp"
 
 Node *Component::get_node(string x)
 {
@@ -8,7 +8,7 @@ Node *Component::get_node(string x)
 
 bool Component::contain_node(string node)
 {
-    if (node == _node_p->get_name() || node == _node_n->get_name())
+    if (node == _node_p->get_name() or node == _node_n->get_name())
     {
         return true;
     }
