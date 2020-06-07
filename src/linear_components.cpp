@@ -22,9 +22,7 @@ double Inductor::get_current(Node *node)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
         exit(1);
     }
 };
@@ -56,9 +54,7 @@ double Capacitor::get_voltage_across(double t, Node *node)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
         exit(1);
     }
 }
@@ -112,16 +108,9 @@ double Voltage::get_voltage_across(double t, Node *node)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
         exit(1);
     }
-}
-
-double Voltage::get_current_through(Node *node)
-{
-    return _current_through;
 }
 
 void Voltage::set_current_through(double current)
@@ -154,17 +143,10 @@ double SINE_Voltage::get_voltage_across(double t, Node *node)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid node, " << node << " not exit in " << _node_p << " and " << _node_n << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
         exit(1);
     }
     return result;
-}
-
-double SINE_Voltage::get_current_through(Node *node)
-{
-    return _current_through;
 }
 
 void SINE_Voltage::set_current_through(double current)
@@ -194,14 +176,7 @@ double Current::get_current(Node *node)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid node, " << node << " for " << _name << " not exit in " << _node_p << " and " << _node_n << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
         exit(1);
     }
-}
-
-double Current::get_current_through(Node *node)
-{
-    return get_current(node);
 }

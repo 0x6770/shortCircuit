@@ -28,7 +28,19 @@ double Component::get_voltage_across(double t, Node *node)
 
 double Component::get_current_through(Node *node)
 {
-    return _current_through;
+    if (node == _node_p)
+    {
+        return _current_through;
+    }
+    else if (node == _node_n)
+    {
+        return -1.0 * _current_through;
+    }
+    else
+    {
+        spdlog::error("🚧 ERROR: invalid node, {} not exit in {} and {}.", node->get_name(), _node_p->get_name(), _node_n->get_name());
+        exit(1);
+    }
 }
 
 double Component::get_current(Node *node)

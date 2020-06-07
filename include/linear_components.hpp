@@ -58,8 +58,6 @@ public:
 
     double get_voltage_across(double t, Node *node);
 
-    double get_current_through(Node *node);
-
     void set_current_through(double current);
 };
 
@@ -79,8 +77,6 @@ public:
 
     double get_voltage_across(double t, Node *node);
 
-    double get_current_through(Node *node);
-
     void set_current_through(double current);
 };
 
@@ -92,8 +88,6 @@ class Current : public Component
 {
 public:
     Current(string name, Node *node_p, Node *node_n, double amplitude);
-
-    double get_current_through(Node *node);
 
     double get_current(Node *node);
 };

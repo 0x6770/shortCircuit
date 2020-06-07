@@ -12,11 +12,14 @@ void Circuit::check_parallel_voltages(vector<Component *> components)
             vector<Component *> p_components = positive->get_components();
             for (auto p_component = p_components.begin(); p_component != p_components.end(); p_component++)
             {
-                Component *another_voltage = (*p_component);
-                if ((another_voltage != voltage) and another_voltage->contain_node(negative->get_name()))
+                if ((*p_component)->get_type() == "V")
                 {
-                    spdlog::error("🚧 ERROR: {} and {} are paralleled voltage sources", voltage->get_name(), another_voltage->get_name());
-                    exit(1);
+                    Component *another_voltage = (*p_component);
+                    if ((another_voltage != voltage) and another_voltage->contain_node(negative->get_name()))
+                    {
+                        spdlog::error("🚧 ERROR: {} and {} are paralleled voltage sources", voltage->get_name(), another_voltage->get_name());
+                        exit(1);
+                    }
                 }
             }
         }
@@ -269,7 +272,14 @@ void Circuit::print()
     {
         if ((*component)->get_type() != "C" and (*component)->get_type() != "V")
         {
-            cout << (*component)->get_current_through((*component)->get_node("p")) << "\t";
+            if ((*component)->get_type() == "L")
+            {
+                cout << (*component)->get_current_through((*component)->get_node("n")) << "\t";
+            }
+            else
+            {
+                cout << (*component)->get_current_through((*component)->get_node("p")) << "\t";
+            }
         }
     }
     cout << endl;

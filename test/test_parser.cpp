@@ -2,15 +2,14 @@
 #include "parser.hpp"
 
 #include <gtest/gtest.h>
-#include <sstream>
 
 using namespace std;
 
 TEST(parser_test, parser_parse_number)
 {
     vector<string> numbers_string{
-        "0.1p",
-        "1.1n",
+        "0.1p", // "0.1p" will cause error in MacOS but "0.1 p" will not.
+        "1.1n", // "1.1n" will cause error in MacOS but "1.1 n" will not.
         "1.1µ",
         "1.1m",
         "1.1",
@@ -43,7 +42,7 @@ TEST(parser_test, parser_parse_number)
     vector<string> numbers_string2 = {
         "",
         "k",
-        "1a1",
+        "a",
     };
     for (int i = 0; i < numbers_string2.size(); i++)
     {

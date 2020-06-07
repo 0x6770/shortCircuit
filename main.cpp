@@ -9,6 +9,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    spdlog::set_level(spdlog::level::warn);
     if (argc < 2)
     {
         spdlog::error("🚧  ERROR: no input file provided as command line argument");
@@ -17,7 +18,6 @@ int main(int argc, char *argv[])
     ifstream input_file(argv[1]);
 
     // Set global log level, available: debug, info, warn, error, critical
-    spdlog::set_level(spdlog::level::warn);
 
     vector<Component *> components;
     vector<Node *> nodes;

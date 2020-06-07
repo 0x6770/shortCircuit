@@ -1,9 +1,8 @@
 #include "parser.hpp"
 
-//* tested and Done
 double parse_number(string input)
 {
-    // 1p, 1n, 1μ, 1m, 1, 1k, 1Meg
+    // 1p, 1n, 1μ, 1m, 1, 1k, 1Meg, 1G
     // cerr << "paring number: " << input << endl;
     assert(!isalpha(input[0])); // input should not be started by alphabet
     assert(!input.empty());     // input should not be empty
@@ -11,9 +10,10 @@ double parse_number(string input)
     double result = 0.0;
     string multiplier = "";
 
-    stringstream ss;
-    ss << input;
+    stringstream ss(input);
     ss >> result >> multiplier;
+
+    cerr << "result: " << result << " multiplier: " << multiplier << endl;
 
     if (multiplier == "p")
     {
@@ -52,16 +52,13 @@ double parse_number(string input)
     }
     else
     {
-        cerr << endl;
-        cerr << "🚧 ERROR: invalid syntax, cannot parse " << input << endl;
-        cerr << endl;
+        spdlog::error("🚧 ERROR: invalid syntax, cannot parse {}.", input);
         exit(1);
     }
 
     return result;
 };
 
-//* tested for R,C,L
 Component *parse_component(string input, vector<Node *> &nodes)
 {
     stringstream ss;
@@ -188,7 +185,6 @@ vector<double> parse_tran(string tran)
     return result;
 }
 
-//* tested and Done
 bool is_comment(string input)
 {
     if (input[0] == '*')
@@ -198,7 +194,6 @@ bool is_comment(string input)
     return false;
 };
 
-//* tested and Done
 bool is_directive(string input)
 {
     if (input[0] == '.')
@@ -208,7 +203,6 @@ bool is_directive(string input)
     return false;
 };
 
-//* tested and Done
 bool is_tran(string directive)
 {
     if (directive.substr(0, 5) == ".tran")
@@ -218,7 +212,6 @@ bool is_tran(string directive)
     return false;
 };
 
-//* tested and Done
 bool is_end(string input)
 {
     if (input.substr(0, 4) == ".end")
@@ -228,7 +221,6 @@ bool is_end(string input)
     return false;
 };
 
-//* tested and Done
 bool is_component(string input)
 {
     if (is_end(input) | is_directive(input) | is_comment(input))

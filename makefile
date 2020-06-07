@@ -4,7 +4,12 @@ all:
 	@echo "\033[1m🚀 Build\033[0m"
 	@echo "=============================="
 	@echo "$$ make run"
-	@echo "This command creates a \`build/\` folder if it has not been created. Then CMake will configure the project. An executable will be produced at ./build/short_circuit"
+	@echo "This command creates a build/ folder if it has not been created. Then CMake will configure the project. An executable will be produced at ./build/short_circuit"
+	@echo "\n"
+	@echo "\033[1m🏗 Rebuild\033[0m"
+	@echo "=============================="
+	@echo "$$ make rebuild"
+	@echo "This command removes the previous build/ folder and compiles the project again. An executable will be produced at ./build/short_circuit"
 	@echo "\n"
 	@echo "\033[1m🚧 Test \033[0m"
 	@echo "=============================="
@@ -30,6 +35,9 @@ endif
 	@echo "\n\n\tTry $$ ./build/short_circuit [path to input file]"
 	@echo "\n\n"
 
+delete:
+	@echo "\n\n🧼 Removing previous build/ folder..."
+	-rm -rf ./build
 
 test: run
 	@echo "🚧 Testing short_circuit..."
