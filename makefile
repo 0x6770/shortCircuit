@@ -6,9 +6,9 @@ all:
 	@echo "$$ make run"
 	@echo "This command creates a build/ folder if it has not been created. Then CMake will configure the project. An executable will be produced at ./build/short_circuit"
 	@echo "\n"
-	@echo "\033[1m🏗 Rebuild\033[0m"
+	@echo "\033[1m🏗 Delete\033[0m"
 	@echo "=============================="
-	@echo "$$ make rebuild"
+	@echo "$$ make delete"
 	@echo "This command removes the previous build/ folder and compiles the project again. An executable will be produced at ./build/short_circuit"
 	@echo "\n"
 	@echo "\033[1m🚧 Test \033[0m"
@@ -29,7 +29,7 @@ ifneq ($(wildcard ./build/),)
 	@cd build && make -j
 else
 	@echo "build/ does not exist"
-	@mkdir build && cd build && cmake .. && make -j
+	@mkdir build && cd build && cmake .. && make
 endif
 	@echo "🚀 short_circuit is ready to rock"
 	@echo "\n\n\tTry $$ ./build/short_circuit [path to input file]"

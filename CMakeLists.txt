@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0.0)
 project(short_circuit VERSION 0.1.0)
 set(CMAKE_CXX_STANDARD 11) # enable C++ 11 feature
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
+set(CMAKE_CXX_FLAGS_RELEASE "-O3") # optimization more for code size and execution time
 
 # ---------------------------------------------------------------------------------------
 # Inlcude .hpp files in include/

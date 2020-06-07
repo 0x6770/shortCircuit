@@ -1,0 +1,71 @@
+
+
+🚀 Start tesing performance about capcitor
+              total        used        free      shared  buff/cache   available
+Mem:          2.9Gi       126Mi       2.5Gi       0.0Ki       284Mi       2.7Gi
+Swap:         1.0Gi       228Mi       795Mi
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_10.net
+real	0m0.336s
+real	0m0.419s
+real	0m0.530s
+real	0m0.233s
+real	0m0.301s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_20.net
+real	0m0.408s
+real	0m0.311s
+real	0m0.362s
+real	0m0.312s
+real	0m0.319s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_40.net
+real	0m0.583s
+real	0m0.551s
+real	0m0.586s
+real	0m0.640s
+real	0m0.682s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_80.net
+real	0m2.104s
+real	0m2.119s
+real	0m2.079s
+real	0m2.143s
+real	0m2.225s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_160.net
+real	0m11.965s
+real	0m11.564s
+real	0m11.622s
+real	0m11.653s
+real	0m11.619s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_320.net
+real	1m13.407s
+real	1m14.587s
+real	1m13.497s
+real	1m13.661s
+real	1m13.496s
+
+
+
+Processing /src/test/shortCircuit/input/C/sin_C_640.net
+real	9m8.716s
+real	9m14.645s
+real	9m11.166s
+real	9m12.824s
+real	9m10.373s
+
+
+

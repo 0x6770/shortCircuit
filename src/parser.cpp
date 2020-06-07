@@ -13,7 +13,8 @@ double parse_number(string input)
     stringstream ss(input);
     ss >> result >> multiplier;
 
-    cerr << "result: " << result << " multiplier: " << multiplier << endl;
+    spdlog::debug("result: {} multiplier: {}", result, multiplier);
+
 
     if (multiplier == "p")
     {
