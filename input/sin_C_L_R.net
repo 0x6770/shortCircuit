@@ -1,8 +1,9 @@
-* test Inductor and Capacitor models with sin voltage
-R1 N001 N002 1k
+*
 V1 N001 0 SINE(0 10 1k)
-L1 N002 0 100m
-C1 N002 0 1µ
-.tran 0 5m 0 1u
+R1 N002 N001 100
+R2 N003 0 50
+C1 N002 N003 1µ
+L1 N002 N003 50m
+.tran 0 4m 0 1u
 .backanno
 .end
