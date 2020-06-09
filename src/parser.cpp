@@ -15,7 +15,6 @@ double parse_number(string input)
 
     spdlog::debug("result: {} multiplier: {}", result, multiplier);
 
-
     if (multiplier == "p")
     {
         result *= 1.0e-12;
@@ -66,6 +65,7 @@ Component *parse_component(string input, vector<Node *> &nodes)
     ss << input;
     string name, node_p, node_n, property, model_name, voltage_type, bias, amplitude, frequency, buffer1, buffer2, buffer3;
     double real_property, real_bias, real_amplitude, real_frequency;
+    spdlog::debug("input[0]: {}", input[0]);
     if (input[0] == 'R')
     {
         ss >> name >> node_p >> node_n >> property;
@@ -118,9 +118,7 @@ Component *parse_component(string input, vector<Node *> &nodes)
         }
         else
         {
-            cerr << endl;
-            cerr << "🚧  ERROR: unsupported modal_name for Diode " << model_name << endl;
-            cerr << endl;
+            spdlog::error("🚧  ERROR: unsupported modal_name for Diode {}", model_name);
             exit(1);
         }
     }
@@ -164,9 +162,7 @@ Component *parse_component(string input, vector<Node *> &nodes)
         real_node_n->add_component(result);
         return result;
     }
-    cerr << endl;
-    cerr << "🚧  ERROR: unsupported component type" << endl;
-    cerr << endl;
+    spdlog::error("🚧  ERROR: unsupported component type");
     exit(1);
 };
 
@@ -176,8 +172,7 @@ vector<double> parse_tran(string tran)
     string tag, start, end, placeholder, step;
     if (!(iss >> tag >> start >> end >> placeholder >> step))
     {
-        cerr << "unknown format for component" << endl;
-        cerr << " => " << tran << endl;
+        spdlog::error("🚧  ERROR: unknown format for component => {}", tran);
         exit(1);
     }
     double real_end = parse_number(end);

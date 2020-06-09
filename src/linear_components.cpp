@@ -166,11 +166,11 @@ Current::Current(string name, Node *node_p, Node *node_n, double amplitude)
 
 double Current::get_current(Node *node)
 {
-    if (node == _node_p)
+    if (node == _node_n)
     {
         return _current_through;
     }
-    else if (node == _node_n)
+    else if (node == _node_p)
     {
         return -1.0 * _current_through;
     }
