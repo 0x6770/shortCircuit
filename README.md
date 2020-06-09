@@ -148,7 +148,11 @@ Numeric analysis was suggested at the first place during group discussion but th
 
 <img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_I%28L1%293eyroZ.png" alt="comparison_I(L1)" style="zoom:50%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_VN0025N8JQs.png" alt="comparison_VN002" style="zoom:50%;" />
 
-As the above figures show, the main deviation occurs at the start of the simulation. 
+As the figures show, the main deviation occurs at the start of the simulation. This might due to a different assumption about the initial condition of the circuit. In our model of component, inductor is treated as open circuit when start operating and capacitor is treated as short circuit when start operating. Thus current of inductor starts zero.
+
+![comparison_LTSpice](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_LTSpiceA4R4dM.png)
+
+By comparing the minimum and maximum values with reference after the first second, it is confident to confirm that these two data sets are similar with only 1.1% error in maximum. 
 
 #### Time Complexity
 
