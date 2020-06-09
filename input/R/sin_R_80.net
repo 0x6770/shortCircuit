@@ -96,6 +96,6 @@ R93 N002 N003 4
 R94 N001 N002 5
 R95 0 N011 5
 R96 N006 0 1
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

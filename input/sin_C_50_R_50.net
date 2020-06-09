@@ -100,6 +100,6 @@ C49 N018 N017 1µ
 R50 N019 N018 50
 C50 0 N019 1µ
 V1 0 N020 SINE(0 10 1k)
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

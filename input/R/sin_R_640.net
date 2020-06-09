@@ -768,6 +768,6 @@ R765 N006 N007 4
 R766 N023 N006 5
 R767 0 N033 5
 R768 N010 0 1
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

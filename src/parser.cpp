@@ -175,6 +175,8 @@ vector<double> parse_tran(string tran)
         spdlog::error("🚧  ERROR: unknown format for component => {}", tran);
         exit(1);
     }
+    end.pop_back();  // delete the "s" at the end
+    step.pop_back(); // delete the "s" at the end
     double real_end = parse_number(end);
     double real_step = parse_number(step);
     vector<double> result = {real_step, real_end};

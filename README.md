@@ -140,23 +140,35 @@ L1 N002 N003 50m
 .end
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_current_refsPTeo6.png" alt="CLR_simulation_current_ref" style="zoom:50%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_currentCzKiAk.png" alt="CLR_simulation_current" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_current_refsPTeo6.png" alt="CLR_simulation_current_ref" style="zoom: 33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_current_LUXmNLzF.png" alt="CLR_simulation_current_LU" style="zoom: 33%;" />
 
-<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_voltage_refjMTaPW.png" alt="CLR_simulation_voltage_ref" style="zoom:50%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_voltageGwoBQPxs2Ivj.png" alt="CLR_simulation_voltage" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_voltage_refjMTaPW.png" alt="CLR_simulation_voltage_ref" style="zoom: 33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_voltage_LUY8eEX0.png" alt="CLR_simulation_voltage_LU" style="zoom: 33%;" />
 
 Numeric analysis was suggested at the first place during group discussion but the viable time step solver feature of LTSpice causing the reference data set to have a different size than the target one and therefore make direct comparison of the Euclidean distance impossible. Graphical comparison was then proposed and used.
 
-<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_I%28L1%293eyroZ.png" alt="comparison_I(L1)" style="zoom:50%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_VN0025N8JQs.png" alt="comparison_VN002" style="zoom:50%;" />
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_I%28L1%293eyroZ.png" alt="comparison_I(L1)" style="zoom: 33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_VN0025N8JQs.png" alt="comparison_VN002" style="zoom: 33%;" />
 
 As the figures show, the main deviation occurs at the start of the simulation. This might due to a different assumption about the initial condition of the circuit. In our model of component, inductor is treated as open circuit when start operating and capacitor is treated as short circuit when start operating. Thus current of inductor starts zero.
 
-![comparison_LTSpice](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/comparison_LTSpiceA4R4dM.png)
+![CLR_simulation_comparison](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/CLR_simulation_comparisonkIOpCE.png)
 
 By comparing the minimum and maximum values with reference after the first second, it is confident to confirm that these two data sets are similar with only 1.1% error in maximum. 
 
 #### Time Complexity
 
-Following are the results from a series of tests that were conducted with different numbers of a single type of components each time. These tests are all conducted using the same executable file and the same docker container running on Arch Linux with 2.5 gigabytes free memory and 4 CPU cores. In order to minimise the potential turbulence caused by background processes and core temperature, etc, each input file was tested for five time to find the average execution time. 
+Two groups of tests were carried to investigate the time complexity of our program. 
+
+In the first group, every `netlist` file contains a various of supported component model to mimic a real life situation and different numbers of nodes. The following graph is plotted with time to solve against number of nodes. Logarithmic scale are applied on both axises since data points scatter in large range. By comparing to exponential growth, the time consumption of our program tends to increase much slower than exponential growth but still faster than logarithmic or linear growth. Since the fastest algorithm to do LU decomposition has complexity around O(n^2.75) [LU complexity], this result reaches our goal to high efficiency. 
+
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/time_consumption_related_to_node_numberOAFcRf.png" alt="time_consumption_related_to_node_number" style="zoom:50%;" />
+
+The second group involving a series of tests that were conducted with different numbers of a single type of components in each test. This group of test is designed to investigate the difference in time complexity for each type of component. By comparing to the reference of linear and exponential growth, it is clear to see that the execution time required to solving a circuit mostly composited of inductors or capacitors increases linearly with number of inductors or capacitor. In contrast, the execution time required to solving a circuit mostly composited of resistor grows exponentially with the number of resistors in it. The key to explain this difference in time complexity lies in the algorithm and the way how test circuits are built. In order to overcome the lack of impedance in capacitor and inductor model, test circuits for inductor use more parallel connection but test circuits for capacitor use more serial connection which introduce more nodes and therefore more rows in the MNA matrixes. In addition to the trend, although time consumption of capacitor increases relatively slower than resistor, it requires significant more time to compute the same amount of components. This is because capacitor is treated as voltage source in our model and every voltage source needs one extra row and column in the MNA matrix. 
+
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/RCL_comparison_LUzSjF0O.png" alt="RCL_comparison_LU" style="zoom:33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/capacitor_LU84zUeB.png" alt="capacitor_LU" style="zoom:33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/inductor_LUMZOFTi.png" alt="inductor_LU" style="zoom:33%;" />
+
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/resistor_LU4TsOgA.png" alt="resistor_LU" style="zoom:33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_linear_refRRVnmq.png" alt="performance_linear_ref" style="zoom: 33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_exp_ref7M9eak.png" alt="performance_exp_ref" style="zoom: 33%;" />
+
+All these tests are conducted using the same executable file and the same docker container running on Arch Linux with 2.5 gigabytes free memory and 4 CPU cores. In order to minimise the potential turbulence caused by background processes and core temperature, etc, each input file was tested for five time to find the average execution time. 
 
 ```bash
 #!/bin/bash
@@ -184,21 +196,32 @@ for file in $INPUTS; do
 done
 ```
 
-<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_RCL_comparisondlF6v7.png" alt="performance_RCL_comparison" style="zoom: 40%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_inductorrtr6Nx.png" alt="performance_inductor" style="zoom: 40%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_linear_refRRVnmq.png" alt="performance_linear_ref" style="zoom: 40%;" />
-
-<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_resistor93b0zi.png" alt="performance_resistor" style="zoom:40%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_capacitor6xBjdd.png" alt="performance_capacitor" style="zoom:40%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/performance_exp_ref7M9eak.png" alt="performance_exp_ref" style="zoom:40%;" />
-
-By comparing to the reference of linear and exponential growth, it is clear to see that the execution time required to solving a circuit mostly composited of inductors or capacitors increases linearly with number of inductors or capacitor. In contrast, the execution time required to solving a circuit mostly composited of resistor grows exponentially with the number of resistors in it. The key to explain this difference in time complexity lies in the algorithm and the way how test circuits are built. In order to overcome the lack of impedance in capacitor and inductor model, test circuits for inductor use more parallel connection but test circuits for capacitor use more serial connection which introduce more nodes and therefore more rows in the MNA matrixes. It is not quite sure about the exact complexity of the inversion algorithm used in Eigen, but a common one should be around O(n^3), see [inversion complexity]. In addition, though capacitor has a relative linear complexity, it requires significant more time to compute the amount of components comparing to Resistor. This is because capacitor is treated as voltage source in our model and every voltage source needs one extra row and column in the MNA matrix. 
-
-#### Space Complexity
 
 
+#### Different methods to solve matrix
+
+The Eigen linear algebra library used in our project supports several methods to solve linear system [methods to solve matrix]. Two methods have been investigated by our group in this project, solving by taking inverse of A  and solving by using LU decomposition.
+
+```c++
+_x = _A.inverse()*_b		// solve by taking inverse of A
+_x = _A.lu().solve(_b);	// solve by using LU decomposition
+```
+
+##### Time complexity
+
+Time complexity of the use of the two methods does not show significant improvement from one to another.
+
+<img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/RCL_comparison_LU3Fy5z8.png" alt="RCL_comparison_LU" style="zoom: 33%;" /><img src="https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/time_consumption_inversemAp7EG.png" alt="time_consumption_inverse" style="zoom:33%;" />
+
+##### Execution speed
+
+For small size matrix(smaller than 100 rows and columns), these two methods result in similar execution speed. But as the node size increases, LU decomposition out performs inversion and saving about 2/3 of execution time which is impressive. 
 
 
 
+## Data
 
-
-### Data
+### Execution time
 
 #### Capacitor
 
@@ -206,14 +229,7 @@ Generated by docker container running on Arch linux with 4 CPU cores and 2.5 gig
 
 Input `netlist` files [https://github.com/Ouikujie/shortCircuit/tree/master/input/C]
 
-| **#Component** | 10     | 20     | 40     | 80    | 160     | 320     | 640      |
-| -------------- | ------ | ------ | ------ | ----- | ------- | ------- | -------- |
-| **Round1**     | 0.336  | 0.408  | 0.583  | 2.104 | 11.965  | 73.407  | 548.716  |
-| **Round2**     | 0.419  | 0.311  | 0.551  | 2.119 | 11.564  | 74.587  | 554.645  |
-| **Round3**     | 0.530  | 0.362  | 0.586  | 2.079 | 11.622  | 73.497  | 551.166  |
-| **Round4**     | 0.233  | 0.312  | 0.640  | 2.143 | 11.653  | 73.661  | 552.824  |
-| **Round5**     | 0.301  | 0.319  | 0.682  | 2.225 | 11.619  | 73.496  | 550.373  |
-| **Average**    | 0.3638 | 0.3424 | 0.6084 | 2.134 | 11.6846 | 73.7296 | 551.5448 |
+![capacitor](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/capacitorPRR319.png)
 
 #### Inductor 
 
@@ -221,14 +237,7 @@ Generated by docker container running on Arch linux with 4 CPU cores and 2.5 gig
 
 Input netlist files [https://github.com/Ouikujie/shortCircuit/tree/master/input/L]
 
-| **#Component** | 10    | 20    | 40    | 80    | 160   | 320    | 640    |
-| -------------- | ----- | ----- | ----- | ----- | ----- | ------ | ------ |
-| **Round1**     | 0.306 | 0.353 | 0.287 | 0.392 | 0.405 | 0.853  | 1.428  |
-| **Round2**     | 0.299 | 0.308 | 0.308 | 0.301 | 0.358 | 0.908  | 1.420  |
-| **Round3**     | 0.317 | 0.254 | 0.352 | 0.342 | 0.453 | 0.957  | 1.336  |
-| **Round4**     | 0.239 | 0.304 | 0.344 | 0.331 | 0.440 | 0.915  | 1.407  |
-| **Round5**     | 0.274 | 0.336 | 0.284 | 0.294 | 0.414 | 0.828  | 1.597  |
-| **Average**    | 0.287 | 0.311 | 0.315 | 0.332 | 0.414 | 0.8922 | 1.4376 |
+![inductor](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/inductorQLUkoV.png)
 
 #### Resistor 
 
@@ -236,16 +245,15 @@ Generated by docker container running on Arch linux with 4 CPU cores and 2.5 gig
 
 Input netlist files [https://github.com/Ouikujie/shortCircuit/tree/master/input/R]
 
-| **#Component** | 10    | 20     | 40     | 80     | 160    | 320    | 640     |
-| -------------- | ----- | ------ | ------ | ------ | ------ | ------ | ------- |
-| **Round1**     | 0.323 | 0.300  | 0.448  | 0.712  | 0.986  | 1.879  | 76.272  |
-| **Round2**     | 0.298 | 0.301  | 0.375  | 0.653  | 0.938  | 1.987  | 76.138  |
-| **Round3**     | 0.305 | 0.380  | 0.350  | 0.661  | 0.864  | 1.833  | 75.855  |
-| **Round4**     | 0.279 | 0.382  | 0.284  | 0.657  | 0.941  | 1.931  | 76.394  |
-| **Round5**     | 0.230 | 0.385  | 0.376  | 0.693  | 0.949  | 1.979  | 75.883  |
-| **Average**    | 0.287 | 0.3496 | 0.3666 | 0.6752 | 0.9356 | 1.9218 | 76.1084 |
+![resistor](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/resistorYtygPY.png)
 
+#### Node
 
+Generated by docker container running on Arch linux with 4 CPU cores and 2.5 gigabytes free memory
+
+Input netlist files [https://github.com/Ouikujie/shortCircuit/tree/master/input/node]
+
+![node](https://cdn.jsdelivr.net/gh/ouikujie/image@master/Mac/nodeDMPItH.png)
 
 [repo] https://github.com/Ouikujie/shortCircuit/
 
@@ -253,3 +261,6 @@ Input netlist files [https://github.com/Ouikujie/shortCircuit/tree/master/input/
 
 [executable file] https://github.com/Ouikujie/shortCircuit/blob/master/test/performance/sample_result/short_circuit
 
+[methods to solve matrix] https://eigen.tuxfamily.org/dox/group__TutorialLinearAlgebra.html
+
+[LU complexity] https://en.wikipedia.org/wiki/Coppersmith%E2%80%93Winograd_algorithm

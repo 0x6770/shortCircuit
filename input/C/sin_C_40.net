@@ -44,6 +44,6 @@ C37 N004 N005 2µ
 C38 N003 N004 3µ
 C39 N002 N003 4µ
 C40 N001 N002 5µ
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

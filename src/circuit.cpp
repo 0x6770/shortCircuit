@@ -48,6 +48,8 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
     _step = step;
     _end = end;
 
+    spdlog::debug("Number of nodes: {}", nodes.size());
+
     // Check whether paralleled voltage sources exist
     check_parallel_voltages(_components);
 
@@ -117,7 +119,8 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
 void Circuit::solve_matrix()
 {
     // solve x from x = A^{-1}·b
-    _x = _A.inverse() * _b;
+    // _x = _A.inverse()*_b;
+    _x = _A.lu().solve(_b);
 
     // update nodal voltages
     for (auto node = _nodes.begin() + 1; node != _nodes.end(); node++)

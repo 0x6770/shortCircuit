@@ -200,7 +200,7 @@ R197 N049 N048 20
 R198 N001 N011 15
 R199 N011 N010 10
 R200 N010 N001 5
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end
 

@@ -28,24 +28,24 @@ int main(int argc, char *argv[])
     {
         if (is_component(line))
         {
-            cerr << "⚙️  Parsing component: " << line << endl;
+            spdlog::debug("⚙️  Parsing component: {}", line);
             components.push_back(parse_component(line, nodes));
         }
         else if (is_directive(line))
         {
             if (is_tran(line))
             {
-                cerr << "⏱  Parsing directive: " << line << endl;
+                spdlog::debug("⏱  Parsing directive: {}", line);
                 time_params = parse_tran(line);
             }
             else if (is_end(line))
             {
-                cerr << "🎬 Reach END of file: " << line << endl;
+                spdlog::debug("🎬 Reach END of file: {}", line);
                 break;
             }
             else
             {
-                cerr << "⚠️  Unsupported syntax: " << line << endl;
+                spdlog::warn("⚠️  Unsupported syntax: {}", line);
             }
         }
     }

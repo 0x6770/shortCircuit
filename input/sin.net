@@ -5,6 +5,6 @@ R3 0 N002 8
 R4 0 N004 4
 V1 N003 N004 SINE(0 4 10)
 V2 N001 0 1
-.tran 0 1 0 100u
+.tran 0 1s 0 100us
 .backanno
 .end

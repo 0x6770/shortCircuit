@@ -44,6 +44,6 @@ L38 N002 N001 50m
 L39 N002 N001 150m
 L40 N002 N001 100m
 R4 N001 N002 100
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

@@ -6,6 +6,6 @@ C1 N003 N004 1µ
 L1 N002 N004 50m
 I1 N002 N004 10m
 V2 N002 N003 SINE(0 0.5 5k)
-.tran 0 4m 0 1u step
+.tran 0 4ms 0 1us
 .backanno
 .end

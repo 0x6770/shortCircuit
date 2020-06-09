@@ -352,6 +352,6 @@ L318 N002 N001 50m
 L319 N002 N001 150m
 L320 N002 N001 100m
 R32 N001 N002 100
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end

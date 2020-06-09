@@ -300,7 +300,7 @@ R377 N015 N016 20
 R378 N032 N046 15
 R379 N046 N047 10
 R380 N047 N032 5
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end
 

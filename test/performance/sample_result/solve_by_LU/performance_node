@@ -1,0 +1,80 @@
+
+
+🚀 Start tesing performance about capcitor
+              total        used        free      shared  buff/cache   available
+Mem:          2.9Gi       303Mi       2.3Gi       0.0Ki       365Mi       2.5Gi
+Swap:         1.0Gi          0B       1.0Gi
+
+
+Processing /src/test/shortCircuit/input/node/nodes_10.net
+real	0m0.036s
+real	0m0.025s
+real	0m0.037s
+real	0m0.023s
+real	0m0.029s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_31.net
+real	0m0.101s
+real	0m0.088s
+real	0m0.096s
+real	0m0.094s
+real	0m0.095s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_64.net
+real	0m0.353s
+real	0m0.295s
+real	0m0.299s
+real	0m0.338s
+real	0m0.292s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_131.net
+real	0m1.367s
+real	0m1.278s
+real	0m1.314s
+real	0m1.318s
+real	0m1.295s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_196.net
+real	0m3.507s
+real	0m3.526s
+real	0m3.426s
+real	0m3.886s
+real	0m3.442s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_329.net
+real	0m13.719s
+real	0m13.592s
+real	0m13.653s
+real	0m13.692s
+real	0m13.583s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_460.net
+real	0m36.520s
+real	0m35.193s
+real	0m35.184s
+real	0m35.096s
+real	0m35.139s
+
+
+
+Processing /src/test/shortCircuit/input/node/nodes_592.net
+real	1m14.180s
+real	1m13.882s
+real	1m13.583s
+real	1m13.533s
+real	1m13.660s
+
+
+

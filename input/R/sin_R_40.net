@@ -48,6 +48,6 @@ R45 N002 N003 4
 R46 N001 N002 5
 R47 0 N011 5
 R48 N006 0 1
-.tran 0 1m 0 1u
+.tran 0 1ms 0 1us
 .backanno
 .end
