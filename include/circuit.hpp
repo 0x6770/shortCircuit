@@ -52,7 +52,7 @@ public:
     void update_A();
 
     /**
-     * @brief solve the equation A·x = b, x = A^{-1}·b
+     * @brief solve the equation A·x = b
      * 
      */
     void solve_matrix();

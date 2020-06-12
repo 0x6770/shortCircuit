@@ -53,9 +53,11 @@ An executable file will be produced at `./build/short_circuit`.
 ```bash
 .
 ├── CMakeLists.txt
+├── CMakeLists.txt.gtest
 ├── README.md
-├── input/ # contains various .net input files
-├── main.cpp
+├── extern
+│   ├── Eigen
+│   └── spdlog
 ├── include
 │   ├── circuit.hpp
 │   ├── component.hpp
@@ -63,13 +65,25 @@ An executable file will be produced at `./build/short_circuit`.
 │   ├── node.hpp
 │   ├── nonlinear_components.hpp
 │   └── parser.hpp
-└── src
-    ├── circuit.cpp
-    ├── component.cpp
-    ├── linear_components.cpp
-    ├── node.cpp
-    ├── nonlinear_components.cpp
-    └── parser.cpp
+├── input/ # contain various netlist files
+├── main.cpp
+├── makefile
+├── short_circuit
+├── src
+│   ├── circuit.cpp
+│   ├── component.cpp
+│   ├── linear_components.cpp
+│   ├── node.cpp
+│   ├── nonlinear_components.cpp
+│   └── parser.cpp
+└── test
+    ├── performance
+    ├── test_capacitor.cpp
+    ├── test_circuit.cpp
+    ├── test_inductor.cpp
+    ├── test_node.cpp
+    ├── test_parser.cpp
+    └── test_resistor.cpp
 ```
 
 

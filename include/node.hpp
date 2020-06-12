@@ -74,7 +74,7 @@ public:
     double get_node_voltage();
 
     /**
-     * @brief Get the currrent of the current node
+     * @brief Get the current of the current node
      * 
      * @param t the required time instant
      * @return double the current value at the required instant
@@ -90,7 +90,7 @@ public:
     void set_node_voltage(double voltage);
 
     /**
-     * @brief check whether a component is voltage source or current source
+     * @brief output info of a component to ostream
      * 
      * @param comp A component
      */

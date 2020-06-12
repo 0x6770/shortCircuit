@@ -126,8 +126,8 @@ TEST(parser_test, parser_parse_component)
 
 TEST(parser_test, parser_parse_tran)
 {
-    string input = ".tran 0 10m 0 1u";
-    string input2 = ".tran 0 5m 0 1µ";
+    string input = ".tran 0 10ms 0 1us";
+    string input2 = ".tran 0 5ms 0 1µs";
     vector<double> output = parse_tran(input);
     vector<double> output2 = parse_tran(input2);
     vector<double> ref = {1.0e-6, 1.0e-2};

@@ -119,7 +119,7 @@ Circuit::Circuit(vector<Node *> nodes, vector<Component *> components, double st
 void Circuit::solve_matrix()
 {
     // solve x from x = A^{-1}·b
-    // _x = _A.inverse()*_b;
+    // _x = _A.inverse() * _b;
     _x = _A.lu().solve(_b);
 
     // update nodal voltages
@@ -152,7 +152,7 @@ void Circuit::solve_matrix()
         {
             double pre_voltage = (*comp)->get_voltage_across(_step, (*comp)->get_node("p"));
             double pre_current = (*comp)->get_current_through((*comp)->get_node("p"));
-            double result = pre_voltage + (_step * pre_current / (*comp)->get_property()); // Forawrd Euler i(t+Δt)≈i(t)+(Δt·v(t))/L
+            double result = pre_voltage + (_step * pre_current / (*comp)->get_property()); // Forward Euler i(t+Δt)≈i(t)+(Δt·v(t))/L
             // double result = pre_voltage + (_step * pre_current / (2.0 * (*comp)->get_property()));  // Trapezoid i(t+Δt)≈i(t)+(Δt·v(t))/(2L)
             (*comp)->set_voltage_across(result);
         }
@@ -161,7 +161,7 @@ void Circuit::solve_matrix()
 
 void Circuit::process_nonlinear_components()
 {
-    double theshold = 1.0e-2;
+    double threshold = 1.0e-2;
     double I_s = 1.0e-12;
     double V_t = 0.02585;
     int num_nonlinear = 0;
@@ -206,9 +206,9 @@ void Circuit::process_nonlinear_components()
                 // cout << "R_d: " << (*component)->get_conductance() << endl;
                 spdlog::debug("PD: {}\told_current: {}\tnew_current: {}", pd, old_current, new_current);
                 (*component)->set_current_through(new_current);
-                if (abs(new_current - old_current) < abs(new_current) * theshold or abs(new_current - old_current) < abs(old_current) * theshold or new_current == 0.0)
+                if (abs(new_current - old_current) < abs(new_current) * threshold or abs(new_current - old_current) < abs(old_current) * threshold or new_current == 0.0)
                 {
-                    // cout << "REACH theshold" << endl;
+                    // cout << "REACH threshold" << endl;
                     for (auto diode = diodes.begin(); diode != diodes.end(); diode++)
                     {
                         int index = diode - diodes.begin();

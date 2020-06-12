@@ -45,7 +45,8 @@ int main(int argc, char *argv[])
             }
             else
             {
-                spdlog::warn("⚠️  Unsupported syntax: {}", line);
+                // spdlog::warn("⚠️  Unsupported syntax: {}", line);
+                cerr << "⚠️  Unsupported syntax: " << line << endl;
             }
         }
     }

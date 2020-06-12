@@ -69,7 +69,7 @@ TEST(node_test, node_get_current)
     p->add_component(C);
     p->add_component(L);
     p->add_component(V);
-    EXPECT_DOUBLE_EQ(p->get_current(), 2.5);
+    EXPECT_DOUBLE_EQ(p->get_current(), -2.5);
 }
 
 TEST(node_test, node_set_get_node_voltage)
