@@ -3,7 +3,7 @@
 void Circuit::check_parallel_voltages(vector<Component *> components)
 {
     for (auto component = components.begin(); component != components.end(); component++)
-    {
+    {//this is for the live editing of the remote server.
         if ((*component)->get_type() == "V")
         {
             Component *voltage = (*component);
